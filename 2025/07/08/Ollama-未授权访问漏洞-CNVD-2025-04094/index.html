@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <title>
       
-         | apt-x
+        Ollama 未授权访问漏洞 CNVD-2025-04094 | apt-x
       
     </title>
     <meta name="description" content=""/>
@@ -59,7 +59,8 @@
           href='/css/layout.css'/>
     
     
-  <link rel="stylesheet" type="text/css" href="/css/category.css" />
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
 
   <meta name="generator" content="Hexo 8.1.1"></head>
   <body>
@@ -140,76 +141,97 @@
     </div>
     <div class="body">
       
-  <div class="wall wall-category--plain">
-    <div class="wall-main">
-      <div class="wall-category-title">
-        <div class="title-icon"
-             style="background-image: url(/blog)"></div>
-        博客
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">Ollama 未授权访问漏洞 CNVD-2025-04094</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2025-07-08</span>
+        </div>
       </div>
-      <div class="wall-category-description"></div>
-      <div class="wall-category-tags">
-        <div id="tags-outer"></div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="Ollama-未授权访问漏洞-CNVD-2025-04094"><a href="#Ollama-未授权访问漏洞-CNVD-2025-04094" class="headerlink" title="Ollama 未授权访问漏洞 CNVD-2025-04094"></a>Ollama 未授权访问漏洞 CNVD-2025-04094</h1><h2 id="漏洞描述"><a href="#漏洞描述" class="headerlink" title="漏洞描述"></a>漏洞描述</h2><p>Ollama 是一个本地私有化部署大语言模型（LLM，如 DeepSeek 等）的运行环境和平台，简化了大语言模型在本地的部署、运行和管理过程，具有简化部署、轻量级可扩展、API 支持、跨平台等特点，在 AI 领域得到了较为广泛的应用。</p>
+<p>Ollama 存在未授权访问漏洞。由于 Ollama 默认未设置身份验证和访问控制功能，未经授权的攻击者可在远程条件下调用 Ollama 服务接口，执行包括但不限于敏感模型资产窃取、虚假信息投喂、模型计算资源滥用和拒绝服务、系统配置篡改和扩大利用等恶意操作。</p>
+<p>参考链接：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnvd.org.cn/flaw/show/CNVD-2025-04094">https://www.cnvd.org.cn/flaw/show/CNVD-2025-04094</a></li>
+</ul>
+<h2 id="漏洞影响"><a href="#漏洞影响" class="headerlink" title="漏洞影响"></a>漏洞影响</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">未设置身份验证和访问控制功能且暴露在公共互联网上的 Ollama 易受此漏洞攻击影响</span><br></pre></td></tr></table></figure>
+
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><p>docker-compose.yml</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">services:</span><br><span class="line">  ollama:</span><br><span class="line">    image: ollama/ollama:0.3.14</span><br><span class="line">    container_name: ollama</span><br><span class="line">    volumes:</span><br><span class="line">      - ollama:/root/.ollama</span><br><span class="line">    ports:</span><br><span class="line">      - &quot;11434:11434&quot;</span><br><span class="line"></span><br><span class="line">volumes:</span><br><span class="line">  ollama:</span><br></pre></td></tr></table></figure>
+
+<p>执行如下命令启动 Ollama 0.3.14 服务:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker compose up -d</span><br></pre></td></tr></table></figure>
+
+<p>环境启动后，访问 <code>http://your-ip:11434/</code>，此时 Ollma 0.3.14 已经成功运行。</p>
+<h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>Ollama 公开了多个执行各种操作的 <a target="_blank" rel="noopener" href="https://github.com/ollama/ollama/blob/main/docs/api.md">API endpoints</a>：</p>
+<p> 通过 <code>/api/tags</code> 列出所有模型：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://your-ip:11434/api/tags</span><br></pre></td></tr></table></figure>
+
+<h2 id="漏洞修复"><a href="#漏洞修复" class="headerlink" title="漏洞修复"></a>漏洞修复</h2><ul>
+<li>限制公网访问：避免直接将 Ollama 服务端口（默认 11434）暴露在公网，仅允许内网或通过 VPN 访问。</li>
+<li>配置网络访问控制：通过云安全组、防火墙等手段限制对 Ollama 服务端口的访问来源，仅允许可信的源 IP 地址连接。</li>
+<li>启用身份认证保护：通过反向代理（如 Nginx）启用 HTTP Basic Authentication 或基于 OAuth 的认证机制。</li>
+</ul>
+
       </div>
     </div>
-  </div>
-  <div class="post-list">
     
-      
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
   
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/11/14/hello-world/" class="post-title hover-line">Hello World</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
+    <a class="post-nav-item-left" href="/2025/11/14/hello-world/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Hello World</div>
+    </a>
   
-
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2024/06/14/CNN/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      CNN
+    </a>
+  
 </div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/07/08/Ollama-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E-CNVD-2025-04094/" class="post-title hover-line">Ollama 未授权访问漏洞 CNVD-2025-04094</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2024/06/14/CNN/" class="post-title hover-line">CNN</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
 
     
     

@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <title>
       
-         | apt-x
+        CNN | apt-x
       
     </title>
     <meta name="description" content=""/>
@@ -59,7 +59,8 @@
           href='/css/layout.css'/>
     
     
-  <link rel="stylesheet" type="text/css" href="/css/category.css" />
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
 
   <meta name="generator" content="Hexo 8.1.1"></head>
   <body>
@@ -140,76 +141,121 @@
     </div>
     <div class="body">
       
-  <div class="wall wall-category--plain">
-    <div class="wall-main">
-      <div class="wall-category-title">
-        <div class="title-icon"
-             style="background-image: url(/blog)"></div>
-        博客
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">CNN</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2024-06-14</span>
+        </div>
       </div>
-      <div class="wall-category-description"></div>
-      <div class="wall-category-tags">
-        <div id="tags-outer"></div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <p>import torch<br>import torch.nn as nn<br>import torchvision<br>import torch.utils.data as Data</p>
+<p>torch.manual_seed(1)  # 设置随机种子, 用于复现</p>
+<h1 id="超参数"><a href="#超参数" class="headerlink" title="超参数"></a>超参数</h1><p>EPOCH &#x3D; 1       # 前向后向传播迭代次数<br>LR &#x3D; 0.001      # 学习率 learning rate<br>BATCH_SIZE &#x3D; 50 # 批量训练时候一次送入数据的size<br>DOWNLOAD_MNIST &#x3D; True </p>
+<h1 id="下载mnist手写数据集"><a href="#下载mnist手写数据集" class="headerlink" title="下载mnist手写数据集"></a>下载mnist手写数据集</h1><h1 id="训练集"><a href="#训练集" class="headerlink" title="训练集"></a>训练集</h1><p>train_data &#x3D; torchvision.datasets.MNIST(<br>    root &#x3D; ‘.&#x2F;MNIST&#x2F;‘,<br>    train &#x3D; True,<br>    transform &#x3D; torchvision.transforms.ToTensor(),<br>    download&#x3D;DOWNLOAD_MNIST<br>)</p>
+<h1 id="测试集"><a href="#测试集" class="headerlink" title="测试集"></a>测试集</h1><p>test_data &#x3D; torchvision.datasets.MNIST(root&#x3D;’.&#x2F;MNIST&#x2F;‘, train&#x3D;False)  # train设置为False表示获取测试集</p>
+<h1 id="一个批训练-50个样本-1-channel通道-图片尺寸-28x28-size-50-1-28-28"><a href="#一个批训练-50个样本-1-channel通道-图片尺寸-28x28-size-50-1-28-28" class="headerlink" title="一个批训练 50个样本, 1 channel通道, 图片尺寸 28x28 size:(50, 1, 28, 28)"></a>一个批训练 50个样本, 1 channel通道, 图片尺寸 28x28 size:(50, 1, 28, 28)</h1><p>train_loader &#x3D; Data.DataLoader(<br>    dataset &#x3D; train_data,<br>    batch_size&#x3D;BATCH_SIZE,<br>    shuffle&#x3D;True<br>) </p>
+<h1 id="测试数据预处理；只测试前2000个"><a href="#测试数据预处理；只测试前2000个" class="headerlink" title="测试数据预处理；只测试前2000个"></a>测试数据预处理；只测试前2000个</h1><p>test_x &#x3D; torch.unsqueeze(test_data.data,dim&#x3D;1).float()[:2000] &#x2F; 255.0</p>
+<h1 id="shape-from-2000-28-28-to-2000-1-28-28"><a href="#shape-from-2000-28-28-to-2000-1-28-28" class="headerlink" title="shape from (2000, 28, 28) to (2000, 1, 28, 28)"></a>shape from (2000, 28, 28) to (2000, 1, 28, 28)</h1><p>test_y &#x3D; test_data.targets[:2000]</p>
+<p>class CNN(nn.Module):<br>    def <strong>init</strong>(self):<br>        super(CNN,self).<strong>init</strong>()</p>
+<pre><code>    self.conv1 = nn.Sequential(
+        nn.Conv2d(                      # 输入的图片 （1，28，28）
+            in_channels=1,
+            out_channels=16,            # 经过一个卷积层之后 （16,28,28）
+            kernel_size=5,
+            stride=1,                    # 如果想要 con2d 出来的图片长宽没有变化, padding=(kernel_size-1)/2 当 stride=1
+            padding=2
+        ),
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2)      # 经过池化层处理，维度为（16,14,14）
+    )
+
+    self.conv2 = nn.Sequential(
+        nn.Conv2d(                         # 输入（16,14,14）
+            in_channels=16,
+            out_channels=32,
+            kernel_size=5,
+            stride=1,
+            padding=2
+        ),                                 # 输出（32,14,14）
+        nn.ReLU(),
+        nn.MaxPool2d(kernel_size=2)        # 输出（32,7,7）
+    )
+
+    self.out = nn.Linear(32*7*7,10)
+
+def forward(self, x):
+    x = self.conv1(x)                     #（batch_size,16,14,14）
+    x = self.conv2(x)                     # 输出（batch_size,32,7,7）
+    x = x.view(x.size(0),-1)              # (batch_size,32*7*7)
+    out = self.out(x)                     # (batch_size,10)
+    return out
+</code></pre>
+<p>cnn &#x3D; CNN()<br>optimizer &#x3D; torch.optim.Adam(cnn.parameters(),lr&#x3D;LR) # 定义优化器<br>loss_func &#x3D; nn.CrossEntropyLoss() # 定义损失函数</p>
+<p>for epoch in range(EPOCH):</p>
+<pre><code>for step,(batch_x,batch_y) in enumerate(train_loader):
+    pred_y = cnn(batch_x)
+    loss = loss_func(pred_y,batch_y)
+    optimizer.zero_grad() # 清空上一层梯度
+    loss.backward() # 反向传播
+    optimizer.step() # 更新优化器的学习率，一般按照epoch为单位进行更新
+
+    if step % 50 == 0:
+        test_output = cnn(test_x)
+        pred_y = torch.max(test_output, 1)[1].numpy()  # torch.max(test_out,1)返回的是test_out中每一行最大的数)
+                                                            # 返回的形式为torch.return_types.max(
+                                                            #           values=tensor([0.7000, 0.9000]),
+                                                            #           indices=tensor([2, 2]))
+                                                            # 后面的[1]代表获取indices
+        print(&#39;Epoch: &#39;, epoch, &#39;| train loss: %.4f&#39; % loss.data.numpy())
+</code></pre>
+<h1 id="打印前十个测试结果和真实结果进行对比"><a href="#打印前十个测试结果和真实结果进行对比" class="headerlink" title="打印前十个测试结果和真实结果进行对比"></a>打印前十个测试结果和真实结果进行对比</h1><p>test_output &#x3D; cnn(test_x[:10])<br>pred_y &#x3D; torch.max(test_output, 1)[1].numpy()<br>print(pred_y, ‘prediction number’)<br>print(test_y[:10].numpy(), ‘real number’)</p>
+
       </div>
     </div>
-  </div>
-  <div class="post-list">
     
-      
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
   
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/11/14/hello-world/" class="post-title hover-line">Hello World</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
+    <a class="post-nav-item-left" href="/2025/07/08/Ollama-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E-CNVD-2025-04094/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Ollama 未授权访问漏洞 CNVD-2025-04094</div>
+    </a>
   
-
+  <div class="vhr"></div>
+  
+    <div class="post-nav-item-right"></div>
+  
 </div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/07/08/Ollama-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E-CNVD-2025-04094/" class="post-title hover-line">Ollama 未授权访问漏洞 CNVD-2025-04094</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2024/06/14/CNN/" class="post-title hover-line">CNN</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
 
     
     
