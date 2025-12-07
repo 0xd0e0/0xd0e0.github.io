@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        一维数据的卷积神经网络CNN实现 | apt-x
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 8.1.1"></head>
+  <body>
+    
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/dev">Dev</a>
+              
+                <a class="nav-menu-item" href="/sec">Sec</a>
+              
+            
+            
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">一维数据的卷积神经网络CNN实现</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2024-06-14</span>
+        </div>
+      </div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python</span></span><br><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">from</span> torch.autograd <span class="keyword">import</span> Variable</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataset, DataLoader</span><br><span class="line"><span class="keyword">import</span> scipy.io <span class="keyword">as</span> sio</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> confusion_matrix</span><br><span class="line"><span class="keyword">from</span> torch.optim.lr_scheduler <span class="keyword">import</span> StepLR</span><br><span class="line"></span><br><span class="line">torch.manual_seed(<span class="number">1</span>) <span class="comment">#reproducible</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#Hyper Parameters</span></span><br><span class="line">EPOCH = <span class="number">10</span></span><br><span class="line">BATCH_SIZE = <span class="number">150</span></span><br><span class="line">BATCH_SIZE_te = <span class="number">100</span></span><br><span class="line">LR = <span class="number">0.001</span></span><br><span class="line"></span><br><span class="line">expName = <span class="string">&#x27;./cnn1-3_nlnn_gaussian_embedding_Relu_new&#x27;</span></span><br><span class="line"><span class="keyword">if</span> expName.find(<span class="string">&#x27;gaussian_embedding&#x27;</span>) != -<span class="number">1</span>:</span><br><span class="line">    model_path = <span class="string">&#x27;./output/cnn/train_epoch_0_step_0.pth&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> os.path.exists(<span class="string">&#x27;./output/&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(expName)):</span><br><span class="line">    os.mkdir(<span class="string">&#x27;./output/&#123;&#125;&#x27;</span>.<span class="built_in">format</span>(expName))</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SBPEstimateDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, ext</span>):</span><br><span class="line">        data = sio.loadmat(<span class="string">&#x27;data.mat&#x27;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.train_x = data[<span class="string">&#x27;DS_Train&#x27;</span>]</span><br><span class="line">        <span class="variable language_">self</span>.train_y = data[<span class="string">&#x27;yTr&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(<span class="variable language_">self</span>.train_y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">        train_x = <span class="variable language_">self</span>.train_x[idx]</span><br><span class="line">        train_y = <span class="variable language_">self</span>.train_y[idx]</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Convert ndarrays to Tensors.&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">                <span class="string">&#x27;train_x&#x27;</span>: torch.from_numpy(train_x).<span class="built_in">float</span>(),</span><br><span class="line">                <span class="string">&#x27;train_y&#x27;</span>: torch.from_numpy(train_y).<span class="built_in">float</span>(),</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SBPEDataset</span>(<span class="title class_ inherited__">Dataset</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, ext</span>):</span><br><span class="line">        data = sio.loadmat(<span class="string">&#x27;data.mat&#x27;</span>)</span><br><span class="line">        <span class="variable language_">self</span>.test_x = data[<span class="string">&#x27;DS_Test&#x27;</span>]</span><br><span class="line">        <span class="variable language_">self</span>.test_y = data[<span class="string">&#x27;yTe&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__len__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">len</span>(<span class="variable language_">self</span>.test_y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__getitem__</span>(<span class="params">self, idx</span>):</span><br><span class="line">        test_x = <span class="variable language_">self</span>.test_x[idx]</span><br><span class="line">        test_y = <span class="variable language_">self</span>.test_y[idx]</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Convert ndarrays to Tensors.&quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> &#123;</span><br><span class="line">                <span class="string">&#x27;test_x&#x27;</span>: torch.from_numpy(test_x).<span class="built_in">float</span>(),</span><br><span class="line">                <span class="string">&#x27;test_y&#x27;</span>: torch.from_numpy(test_y).<span class="built_in">float</span>(),</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">train_dataset = SBPEstimateDataset(<span class="string">&#x27;data&#x27;</span>)</span><br><span class="line">train_loader = DataLoader(train_dataset, batch_size=BATCH_SIZE, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">total_episodes = EPOCH * <span class="built_in">len</span>(train_loader)</span><br><span class="line"></span><br><span class="line">test_dataset = SBPEDataset(<span class="string">&#x27;data&#x27;</span>)</span><br><span class="line">test_loader = DataLoader(test_dataset, batch_size=BATCH_SIZE_te, shuffle=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># for step, batch in enumerate(train_loader):   # gives batch data, normalize x when iterate train_loader</span></span><br><span class="line"><span class="comment">#     train_x = batch[&#x27;train_x&#x27;]</span></span><br><span class="line"><span class="comment">#     train_y = batch[&#x27;train_y&#x27;]</span></span><br><span class="line"><span class="comment">#     b_x = Variable(train_x)   # batch x</span></span><br><span class="line"><span class="comment">#     b_y = Variable(train_y)</span></span><br><span class="line"><span class="comment">#     print(11111)</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CNN</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(CNN, <span class="variable language_">self</span>).__init__()</span><br><span class="line">        <span class="variable language_">self</span>.conv1 = nn.Sequential(</span><br><span class="line">            nn.Conv1d(in_channels=<span class="number">1</span>,</span><br><span class="line">                      out_channels=<span class="number">32</span>,  <span class="comment"># n_filter</span></span><br><span class="line">                      kernel_size=<span class="number">9</span>,  <span class="comment"># filter size</span></span><br><span class="line">                      stride=<span class="number">1</span>,  <span class="comment"># filter step</span></span><br><span class="line">                      padding=<span class="number">4</span>,  <span class="comment"># con2d出来的图片大小不变</span></span><br><span class="line">                      ),</span><br><span class="line">            nn.ReLU(),</span><br><span class="line">            nn.MaxPool1d(kernel_size=<span class="number">2</span>)  <span class="comment"># 1x2采样，o</span></span><br><span class="line"></span><br><span class="line">        )</span><br><span class="line">        <span class="variable language_">self</span>.conv2 = nn.Sequential(nn.Conv1d(<span class="number">32</span>, <span class="number">64</span>, <span class="number">9</span>, <span class="number">1</span>, <span class="number">4</span>),</span><br><span class="line">                                   nn.ReLU(),</span><br><span class="line">                                   nn.MaxPool1d(<span class="number">2</span>))</span><br><span class="line"></span><br><span class="line">        <span class="variable language_">self</span>.conv3 = nn.Sequential(nn.Conv1d(<span class="number">64</span>, <span class="number">128</span>,  <span class="number">9</span>, <span class="number">1</span>, <span class="number">4</span>),</span><br><span class="line">                                   nn.ReLU(),</span><br><span class="line">                                   nn.MaxPool1d(<span class="number">2</span>))</span><br><span class="line">        <span class="variable language_">self</span>.out = nn.Linear(<span class="number">128</span> * <span class="number">1</span> * <span class="number">32</span>, <span class="number">3</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), <span class="number">1</span>, <span class="number">256</span>)</span><br><span class="line">        <span class="built_in">print</span>(x.size())</span><br><span class="line">        x = <span class="variable language_">self</span>.conv1(x)</span><br><span class="line">        <span class="built_in">print</span>(x.size())</span><br><span class="line">        x = <span class="variable language_">self</span>.conv2(x)</span><br><span class="line">        <span class="built_in">print</span>(x.size())</span><br><span class="line">        x = <span class="variable language_">self</span>.conv3(x)</span><br><span class="line">        <span class="built_in">print</span>(x.size())</span><br><span class="line">        x = x.view(x.size(<span class="number">0</span>), -<span class="number">1</span>)</span><br><span class="line">        x = <span class="variable language_">self</span>.out(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">cnn = CNN()</span><br><span class="line"></span><br><span class="line">optimizer = torch.optim.Adam(cnn.parameters(), lr=LR, weight_decay=<span class="number">1e-5</span>)</span><br><span class="line">optimizer_scheduler = StepLR(optimizer, step_size=<span class="built_in">int</span>(total_episodes / <span class="number">5</span>), gamma=<span class="number">0.5</span>)</span><br><span class="line">loss_function = nn.CrossEntropyLoss()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">count = <span class="number">0</span></span><br><span class="line">test_acc = []</span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(EPOCH):</span><br><span class="line">    <span class="keyword">for</span> step, batch <span class="keyword">in</span> <span class="built_in">enumerate</span>(train_loader):   <span class="comment"># gives batch data, normalize x when iterate train_loader</span></span><br><span class="line">        optimizer_scheduler.step(count)</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">        train_x = batch[<span class="string">&#x27;train_x&#x27;</span>]</span><br><span class="line">        train_y = batch[<span class="string">&#x27;train_y&#x27;</span>]</span><br><span class="line">        b_x = Variable(train_x)  <span class="comment"># batch x</span></span><br><span class="line">        <span class="comment">#b_x = b_x.view(b_x.shape[0], b_x.shape[1], 1)</span></span><br><span class="line">        b_y = Variable(train_y).long().view(train_y.shape[<span class="number">0</span>])</span><br><span class="line">        output = cnn(b_x)</span><br><span class="line"></span><br><span class="line">        loss = loss_function(output, b_y)  <span class="comment"># cross entropy loss</span></span><br><span class="line">        optimizer.zero_grad()  <span class="comment"># clear gradients for this training step</span></span><br><span class="line">        loss.backward()  <span class="comment"># backpropagation, compute gradients</span></span><br><span class="line">        optimizer.step()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> step % <span class="number">50</span> == <span class="number">0</span>:</span><br><span class="line">            train_output = cnn(b_x)</span><br><span class="line">            train_y = torch.<span class="built_in">max</span>(train_output, <span class="number">1</span>)[<span class="number">1</span>].data.squeeze()</span><br><span class="line">            accuracy_tr = <span class="built_in">float</span>(<span class="built_in">sum</span>(train_y == b_y)) / <span class="built_in">float</span>(b_y.size(<span class="number">0</span>))</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;Epoch:&#x27;</span>, epoch, <span class="string">&#x27;|Step:&#x27;</span>, step,</span><br><span class="line">                  <span class="string">&#x27;|train loss:%.4f&#x27;</span> % loss.item(), <span class="string">&#x27;|train accuracy:%.4f&#x27;</span> % accuracy_tr)</span><br><span class="line"></span><br><span class="line">            m = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span> step_,batch <span class="keyword">in</span> <span class="built_in">enumerate</span>(test_loader):</span><br><span class="line">                test_x = batch[<span class="string">&#x27;test_x&#x27;</span>]</span><br><span class="line">                test_y = batch[<span class="string">&#x27;test_y&#x27;</span>]</span><br><span class="line">                b_tx = Variable(test_x)  <span class="comment"># batch x</span></span><br><span class="line">                <span class="comment"># b_x = b_x.view(b_x.shape[0], b_x.shape[1], 1)</span></span><br><span class="line">                b_ty = Variable(test_y).long().view(test_y.shape[<span class="number">0</span>])</span><br><span class="line">                test_output = cnn(b_tx)</span><br><span class="line">                pred_y = torch.<span class="built_in">max</span>(test_output, <span class="number">1</span>)[<span class="number">1</span>].data.squeeze()</span><br><span class="line">                accuracy = <span class="built_in">float</span>(<span class="built_in">sum</span>(pred_y == b_ty)) / <span class="built_in">float</span>(test_y.size(<span class="number">0</span>))</span><br><span class="line">                m = accuracy + m</span><br><span class="line">                <span class="keyword">if</span> step_ % <span class="number">52</span> == <span class="number">0</span>:</span><br><span class="line">                    C = confusion_matrix(b_ty, pred_y)</span><br><span class="line">            m = m / <span class="number">52</span></span><br><span class="line">            test_acc.append(m)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&#x27;|test accuracy:%.4f&#x27;</span> % m)</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">max</span>(test_acc) &lt;= m:</span><br><span class="line">                file_name = <span class="string">&#x27;./output/&#123;&#125;/train_epoch_&#123;&#125;_step_&#123;&#125;.pth&#x27;</span>.<span class="built_in">format</span>(expName, epoch, step)</span><br><span class="line">                torch.save(cnn.state_dict(), file_name)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;|max accuracy:%.4f&#x27;</span> % <span class="built_in">max</span>(test_acc))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      </div>
+    </div>
+    
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2025/07/08/Ollama-%E6%9C%AA%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%BC%8F%E6%B4%9E-CNVD-2025-04094/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>Ollama 未授权访问漏洞 CNVD-2025-04094</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2016/12/07/hello-world/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      Hello World
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+  <div class="foot-inner">
+    <div class="foot__head">
+      
+        <div class="foot-line">
+          <div class="matts">想</div><div class="matts">要</div><div class="matts">走</div><div class="matts">上</div><div class="matts">那</div><div class="matts">条</div><div class="matts">路</div>
+        </div>
+      
+        <div class="foot-line">
+          <div class="matts">就</div><div class="matts">要</div><div class="matts">先</div><div class="matts">成</div><div class="matts">为</div><div class="matts">那</div><div class="matts">条</div><div class="matts">路</div>
+        </div>
+      
+    </div>
+    <div class="foot__body">
+      
+        <div class="foot-item">
+          <div class="foot-item__head">朋友</div>
+          <div class="foot-item__body">
+            
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://apt-x.cn">apt-x</a>
+          </div>
+        
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link+.svg" />
+            <a class="foot-link" href="mailto:0xd0e0@gmail.com?subject=申请http://example.com的友链">申请友链</a>
+          </div>
+        
+      
+        
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      
+        <div class="foot-item">
+          <div class="foot-item__head">账号</div>
+          <div class="foot-item__body">
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/logo-github.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/0xd0e0">0xd0e0</a>
+          </div>
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      <div class="foot-item">
+        <div class="foot-item__head">联系</div>
+        <div class="foot-item__body">
+          
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-email.svg" />
+            <a class="foot-link" href="0xd0e0@gmail.com">0xd0e0@gmail.com</a>
+          </div>
+        
+      
+        
+        
+      
+        
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+        </div>
+      </div>
+    </div>
+    <div class="copyright">
+      <a href="http://example.com">apt-x</a> &nbsp;|&nbsp;由&nbsp;<a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>&nbsp;及&nbsp;
+      <svg width="20" height="20" viewBox="0 0 725 725">
+        <path fill-rule="evenodd" fill="rgb(221, 221, 221)" d="M145.870,236.632 L396.955,103.578 L431.292,419.44 L156.600,522.53 L145.870,236.632 Z" />
+        <path fill-rule="evenodd" fill="rgb(159, 159, 159)" d="M396.955,103.578 L564.345,234.486 L611.558,513.469 L431.292,419.44 L396.955,103.578 Z" />
+        <path fill-rule="evenodd" fill="rgb(0, 0, 0)" d="M431.292,419.44 L611.558,513.469 L358.327,595.18 L156.600,522.53 L431.292,419.44 Z" />
+      </svg>
+      <a target="_blank" rel="noopener" href="https://github.com/hooozen/hexo-theme-tranquility">致远</a>&nbsp;驱动
+    </div>
+  </div>
+</div>
+
+    
+    
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+  
+
+  </body>
+</html>
