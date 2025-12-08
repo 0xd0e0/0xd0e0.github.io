@@ -239,7 +239,7 @@
 <p>channelRead0 方法用于处理服务端返回给我们的响应，打印服务端返回给客户端的信息。至此，Netty 客户端的编写就完成了，我们先开启服务端，然后开启客户端就可以看到效果了。</p>
 <p>希望通过前面介绍的几个例子能让大家基本知道如何编写 Netty 客户端和服务端，下面我们来说说 Netty 程序为什么是这样编写的，这也是 Netty 中最为重要的一部分知识，可以让你在编写 netty 程序时做到心中有数。</p>
 <p>在这里我向大家推荐一个架构学习交流群。交流学习群号：<strong>747981058</strong> 里面会分享一些资深架构师录制的视频录像：有Spring，MyBatis，Netty源码分析，高并发、高性能、分布式、微服务架构的原理，JVM性能优化、分布式架构等这些成为架构师必备的知识体系。</p>
-<h1 id="四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext之间的关系"><a href="#四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext之间的关系" class="headerlink" title="四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext之间的关系"></a><strong>四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext之间的关系</strong></h1><p>在编写 Netty 程序时，经常跟我们打交道的是上面这几个对象，这也是 Netty 中几个重要的对象，下面我们来看看它们之间有什么样的关系。</p>
+<h1 id="四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext-之间的关系"><a href="#四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext-之间的关系" class="headerlink" title="四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext 之间的关系"></a><strong>四、Channel、ChannelPipeline、ChannelHandler、ChannelHandlerContext 之间的关系</strong></h1><p>在编写 Netty 程序时，经常跟我们打交道的是上面这几个对象，这也是 Netty 中几个重要的对象，下面我们来看看它们之间有什么样的关系。</p>
 <p>Netty 中的 Channel 是框架自己定义的一个通道接口，Netty 实现的客户端 NIO 套接字通道是 NioSocketChannel，提供的服务器端 NIO 套接字通道是 NioServerSocketChannel。</p>
 <p>当服务端和客户端建立一个新的连接时， 一个新的 Channel 将被创建，同时它会被自动地分配到它专属的 ChannelPipeline。</p>
 <p>ChannelPipeline 是一个拦截流经 Channel 的入站和出站事件的 ChannelHandler 实例链，并定义了用于在该链上传播入站和出站事件流的 API。那么就很容易看出这些 ChannelHandler 之间的交互是组成一个应用程序数据和事件处理逻辑的核心。</p>
@@ -449,7 +449,7 @@
                  height="20px"
                  width="20px"
                  src="/images/logo-github.svg" />
-            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/0xd0e0">0xd0e0</a>
+            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/CVEProject">CVEProject</a>
           </div>
         
       
