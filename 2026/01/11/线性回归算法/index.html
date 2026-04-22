@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        一文读懂线性回归算法 | apt-x
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 8.1.1"></head>
+  <body>
+    
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/dev">Dev</a>
+              
+                <a class="nav-menu-item" href="/sec">Sec</a>
+              
+            
+            
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">一文读懂线性回归算法</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2026-01-11</span>
+        </div>
+      </div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="线性回归算法详解"><a href="#线性回归算法详解" class="headerlink" title="线性回归算法详解"></a>线性回归算法详解</h1><h2 id="一、基本概念"><a href="#一、基本概念" class="headerlink" title="一、基本概念"></a>一、基本概念</h2><h3 id="1-1-什么是线性回归？"><a href="#1-1-什么是线性回归？" class="headerlink" title="1.1 什么是线性回归？"></a>1.1 什么是线性回归？</h3><p>线性回归（Linear Regression）是机器学习和统计学中<strong>最基础且应用广泛</strong>的回归算法，主要用于建立一个或多个自变量（特征变量）与一个连续型因变量（目标变量）之间的<strong>线性关系模型</strong>。</p>
+<h3 id="1-2-核心思想"><a href="#1-2-核心思想" class="headerlink" title="1.2 核心思想"></a>1.2 核心思想</h3><p>通过一条直线（简单线性回归）或一个超平面（多元线性回归）来拟合数据，使得预测值与实际值之间的误差最小化。</p>
+<h3 id="1-3-算法类型"><a href="#1-3-算法类型" class="headerlink" title="1.3 算法类型"></a>1.3 算法类型</h3><ul>
+<li><strong>监督学习</strong>：需要标签数据</li>
+<li><strong>回归算法</strong>：预测连续值</li>
+<li><strong>判别模型</strong>：直接建模条件概率</li>
+</ul>
+<hr>
+<h2 id="二、数学原理"><a href="#二、数学原理" class="headerlink" title="二、数学原理"></a>二、数学原理</h2><h3 id="2-1-假设函数（Hypothesis-Function）"><a href="#2-1-假设函数（Hypothesis-Function）" class="headerlink" title="2.1 假设函数（Hypothesis Function）"></a>2.1 假设函数（Hypothesis Function）</h3><h4 id="2-1-1-一元线性回归"><a href="#2-1-1-一元线性回归" class="headerlink" title="2.1.1 一元线性回归"></a>2.1.1 一元线性回归</h4><p>只有一个特征的情况：</p>
+<p>$$ h(x) &#x3D; w_0 + w_1x $$</p>
+<p>其中：</p>
+<ul>
+<li>$h(x)$：预测值</li>
+<li>$x$：输入特征</li>
+<li>$w_0$：截距项（偏置）</li>
+<li>$w_1$：权重系数</li>
+</ul>
+<h4 id="2-1-2-多元线性回归"><a href="#2-1-2-多元线性回归" class="headerlink" title="2.1.2 多元线性回归"></a>2.1.2 多元线性回归</h4><p>有多个特征的情况：</p>
+<p>$$ h(x) &#x3D; w_0 + w_1x_1 + w_2x_2 + \cdots + w_nx_n &#x3D; w^Tx $$</p>
+<p>其中：</p>
+<ul>
+<li>$x &#x3D; [x_1, x_2, …, x_n]^T$：特征向量</li>
+<li>$w &#x3D; [w_0, w_1, w_2, …, w_n]^T$：权重向量</li>
+<li>通常将 $w_0$ 视为 $x_0 &#x3D; 1$ 的系数</li>
+</ul>
+<h3 id="2-2-矩阵形式表示"><a href="#2-2-矩阵形式表示" class="headerlink" title="2.2 矩阵形式表示"></a>2.2 矩阵形式表示</h3><p>对于 $m$ 个样本，$n$ 个特征：</p>
+<p>$$ \mathbf{y} &#x3D; \mathbf{Xw} + \mathbf{\epsilon} $$</p>
+<p>其中：</p>
+<ul>
+<li>$\mathbf{y} \in \mathbb{R}^{m \times 1}$：目标值向量</li>
+<li>$\mathbf{X} \in \mathbb{R}^{m \times (n+1)}$：特征矩阵（包含全1列）</li>
+<li>$\mathbf{w} \in \mathbb{R}^{(n+1) \times 1}$：权重向量</li>
+<li>$\mathbf{\epsilon}$：误差项</li>
+</ul>
+<hr>
+<h2 id="三、损失函数（Loss-Function）"><a href="#三、损失函数（Loss-Function）" class="headerlink" title="三、损失函数（Loss Function）"></a>三、损失函数（Loss Function）</h2><h3 id="3-1-均方误差（MSE-Mean-Squared-Error）"><a href="#3-1-均方误差（MSE-Mean-Squared-Error）" class="headerlink" title="3.1 均方误差（MSE - Mean Squared Error）"></a>3.1 均方误差（MSE - Mean Squared Error）</h3><p>最常用的损失函数：</p>
+<p>$$ J(w) &#x3D; \frac{1}{2m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})^2 $$</p>
+<p><strong>为什么除以2？</strong></p>
+<ul>
+<li>为了求导时消去平方项的系数2，简化计算</li>
+<li>不影响最优解的位置</li>
+</ul>
+<h3 id="3-2-其他损失函数"><a href="#3-2-其他损失函数" class="headerlink" title="3.2 其他损失函数"></a>3.2 其他损失函数</h3><h4 id="3-2-1-平均绝对误差（MAE-Mean-Absolute-Error）"><a href="#3-2-1-平均绝对误差（MAE-Mean-Absolute-Error）" class="headerlink" title="3.2.1 平均绝对误差（MAE - Mean Absolute Error）"></a>3.2.1 平均绝对误差（MAE - Mean Absolute Error）</h4><p>$$ J(w) &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^{m} |h(x^{(i)}) - y^{(i)}| $$</p>
+<p><strong>特点</strong>：对异常值不敏感，但不可导</p>
+<h4 id="3-2-2-均方根误差（RMSE-Root-Mean-Squared-Error）"><a href="#3-2-2-均方根误差（RMSE-Root-Mean-Squared-Error）" class="headerlink" title="3.2.2 均方根误差（RMSE - Root Mean Squared Error）"></a>3.2.2 均方根误差（RMSE - Root Mean Squared Error）</h4><p>$$ J(w) &#x3D; \sqrt{\frac{1}{m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})^2} $$</p>
+<p><strong>特点</strong>：与原始数据单位一致</p>
+<hr>
+<h2 id="四、参数优化方法"><a href="#四、参数优化方法" class="headerlink" title="四、参数优化方法"></a>四、参数优化方法</h2><h3 id="4-1-正规方程（Normal-Equation）"><a href="#4-1-正规方程（Normal-Equation）" class="headerlink" title="4.1 正规方程（Normal Equation）"></a>4.1 正规方程（Normal Equation）</h3><h4 id="4-1-1-原理"><a href="#4-1-1-原理" class="headerlink" title="4.1.1 原理"></a>4.1.1 原理</h4><p>通过对损失函数求偏导，令导数等于0，直接求解最优参数：</p>
+<p>$$ \frac{\partial J(w)}{\partial w} &#x3D; 0 $$</p>
+<h4 id="4-1-2-解析解"><a href="#4-1-2-解析解" class="headerlink" title="4.1.2 解析解"></a>4.1.2 解析解</h4><p>$$ w &#x3D; (\mathbf{X}^T\mathbf{X})^{-1}\mathbf{X}^T\mathbf{y} $$</p>
+<h4 id="4-1-3-优缺点"><a href="#4-1-3-优缺点" class="headerlink" title="4.1.3 优缺点"></a>4.1.3 优缺点</h4><p><strong>优点</strong>：</p>
+<ul>
+<li>无需选择学习率</li>
+<li>无需迭代，一次求解</li>
+<li>保证找到全局最优解</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>需要计算矩阵逆，时间复杂度 $O(n^3)$</li>
+<li>当特征数量很大时（如 $n &gt; 10^4$），计算效率低</li>
+<li>要求 $\mathbf{X}^T\mathbf{X}$ 可逆</li>
+</ul>
+<h3 id="4-2-梯度下降法（Gradient-Descent）"><a href="#4-2-梯度下降法（Gradient-Descent）" class="headerlink" title="4.2 梯度下降法（Gradient Descent）"></a>4.2 梯度下降法（Gradient Descent）</h3><h4 id="4-2-1-基本原理"><a href="#4-2-1-基本原理" class="headerlink" title="4.2.1 基本原理"></a>4.2.1 基本原理</h4><p>通过迭代方式，沿着损失函数下降最快的方向（负梯度方向）更新参数。</p>
+<h4 id="4-2-2-更新公式"><a href="#4-2-2-更新公式" class="headerlink" title="4.2.2 更新公式"></a>4.2.2 更新公式</h4><p>$$ w_j :&#x3D; w_j - \alpha \frac{\partial J(w)}{\partial w_j} $$</p>
+<p>其中 $\alpha$ 是学习率（步长）</p>
+<h4 id="4-2-3-梯度计算"><a href="#4-2-3-梯度计算" class="headerlink" title="4.2.3 梯度计算"></a>4.2.3 梯度计算</h4><p>对于均方误差损失函数：</p>
+<p>$$ \frac{\partial J(w)}{\partial w_j} &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})x_j^{(i)} $$</p>
+<p>完整更新公式：</p>
+<p>$$ w_j :&#x3D; w_j - \alpha \frac{1}{m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})x_j^{(i)} $$</p>
+<h4 id="4-2-4-三种梯度下降变体"><a href="#4-2-4-三种梯度下降变体" class="headerlink" title="4.2.4 三种梯度下降变体"></a>4.2.4 三种梯度下降变体</h4><h5 id="1-批量梯度下降（Batch-Gradient-Descent-BGD）"><a href="#1-批量梯度下降（Batch-Gradient-Descent-BGD）" class="headerlink" title="1. 批量梯度下降（Batch Gradient Descent, BGD）"></a>1. 批量梯度下降（Batch Gradient Descent, BGD）</h5><ul>
+<li>使用<strong>全部训练数据</strong>计算梯度</li>
+<li>更新公式：$w :&#x3D; w - \alpha \nabla J(w)$</li>
+<li><strong>优点</strong>：收敛稳定，保证找到全局最优解</li>
+<li><strong>缺点</strong>：数据量大时计算慢，无法在线学习</li>
+</ul>
+<h5 id="2-随机梯度下降（Stochastic-Gradient-Descent-SGD）"><a href="#2-随机梯度下降（Stochastic-Gradient-Descent-SGD）" class="headerlink" title="2. 随机梯度下降（Stochastic Gradient Descent, SGD）"></a>2. 随机梯度下降（Stochastic Gradient Descent, SGD）</h5><ul>
+<li>每次使用<strong>一个样本</strong>计算梯度</li>
+<li>更新公式：$w :&#x3D; w - \alpha \nabla J^{(i)}(w)$</li>
+<li><strong>优点</strong>：计算快，可在线学习</li>
+<li><strong>缺点</strong>：收敛路径波动大，可能无法精确收敛</li>
+</ul>
+<h5 id="3-小批量梯度下降（Mini-Batch-Gradient-Descent-MBGD）"><a href="#3-小批量梯度下降（Mini-Batch-Gradient-Descent-MBGD）" class="headerlink" title="3. 小批量梯度下降（Mini-Batch Gradient Descent, MBGD）"></a>3. 小批量梯度下降（Mini-Batch Gradient Descent, MBGD）</h5><ul>
+<li>每次使用<strong>一小批样本</strong>（如32、64、128）计算梯度</li>
+<li><strong>优点</strong>：兼顾BGD和SGD的优点</li>
+<li><strong>缺点</strong>：需要选择合适的批量大小</li>
+</ul>
+<hr>
+<h2 id="五、特征预处理"><a href="#五、特征预处理" class="headerlink" title="五、特征预处理"></a>五、特征预处理</h2><h3 id="5-1-为什么需要特征缩放？"><a href="#5-1-为什么需要特征缩放？" class="headerlink" title="5.1 为什么需要特征缩放？"></a>5.1 为什么需要特征缩放？</h3><ul>
+<li>加速梯度下降收敛</li>
+<li>避免某些特征因量纲大而主导模型</li>
+<li>提高数值稳定性</li>
+</ul>
+<h3 id="5-2-常用方法"><a href="#5-2-常用方法" class="headerlink" title="5.2 常用方法"></a>5.2 常用方法</h3><h4 id="5-2-1-最小-最大归一化（Min-Max-Scaling）"><a href="#5-2-1-最小-最大归一化（Min-Max-Scaling）" class="headerlink" title="5.2.1 最小-最大归一化（Min-Max Scaling）"></a>5.2.1 最小-最大归一化（Min-Max Scaling）</h4><p>$$ x_{\text{norm}} &#x3D; \frac{x - x_{\min}}{x_{\max} - x_{\min}} $$</p>
+<ul>
+<li>将特征缩放到 [0, 1] 范围</li>
+<li>对异常值敏感</li>
+</ul>
+<h4 id="5-2-2-Z-Score标准化（Standardization）"><a href="#5-2-2-Z-Score标准化（Standardization）" class="headerlink" title="5.2.2 Z-Score标准化（Standardization）"></a>5.2.2 Z-Score标准化（Standardization）</h4><p>$$ x_{\text{std}} &#x3D; \frac{x - \mu}{\sigma} $$</p>
+<ul>
+<li>将特征转换为均值为0，标准差为1的分布</li>
+<li>对异常值相对不敏感</li>
+<li><strong>推荐使用</strong></li>
+</ul>
+<hr>
+<h2 id="六、正则化（Regularization）"><a href="#六、正则化（Regularization）" class="headerlink" title="六、正则化（Regularization）"></a>六、正则化（Regularization）</h2><h3 id="6-1-为什么要正则化？"><a href="#6-1-为什么要正则化？" class="headerlink" title="6.1 为什么要正则化？"></a>6.1 为什么要正则化？</h3><ul>
+<li>防止过拟合</li>
+<li>提高模型泛化能力</li>
+<li>处理多重共线性问题</li>
+</ul>
+<h3 id="6-2-L1正则化（Lasso-Regression）"><a href="#6-2-L1正则化（Lasso-Regression）" class="headerlink" title="6.2 L1正则化（Lasso Regression）"></a>6.2 L1正则化（Lasso Regression）</h3><h4 id="6-2-1-损失函数"><a href="#6-2-1-损失函数" class="headerlink" title="6.2.1 损失函数"></a>6.2.1 损失函数</h4><p>$$ J(w) &#x3D; \frac{1}{2m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j&#x3D;1}^{n} |w_j| $$</p>
+<h4 id="6-2-2-特点"><a href="#6-2-2-特点" class="headerlink" title="6.2.2 特点"></a>6.2.2 特点</h4><ul>
+<li>可产生<strong>稀疏解</strong>（某些权重为0）</li>
+<li>相当于<strong>特征选择</strong></li>
+<li>适用于高维数据</li>
+</ul>
+<h3 id="6-3-L2正则化（Ridge-Regression）"><a href="#6-3-L2正则化（Ridge-Regression）" class="headerlink" title="6.3 L2正则化（Ridge Regression）"></a>6.3 L2正则化（Ridge Regression）</h3><h4 id="6-3-1-损失函数"><a href="#6-3-1-损失函数" class="headerlink" title="6.3.1 损失函数"></a>6.3.1 损失函数</h4><p>$$ J(w) &#x3D; \frac{1}{2m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})^2 + \lambda \sum_{j&#x3D;1}^{n} w_j^2 $$</p>
+<h4 id="6-3-2-特点"><a href="#6-3-2-特点" class="headerlink" title="6.3.2 特点"></a>6.3.2 特点</h4><ul>
+<li>所有权重都会被缩小，但不会为0</li>
+<li>防止过拟合效果好</li>
+<li>计算更稳定</li>
+</ul>
+<h3 id="6-4-Elastic-Net"><a href="#6-4-Elastic-Net" class="headerlink" title="6.4 Elastic Net"></a>6.4 Elastic Net</h3><p>结合L1和L2正则化：</p>
+<p>$$ J(w) &#x3D; \frac{1}{2m} \sum_{i&#x3D;1}^{m} (h(x^{(i)}) - y^{(i)})^2 + \lambda_1 \sum_{j&#x3D;1}^{n} |w_j| + \lambda_2 \sum_{j&#x3D;1}^{n} w_j^2 $$</p>
+<hr>
+<h2 id="七、模型评估指标"><a href="#七、模型评估指标" class="headerlink" title="七、模型评估指标"></a>七、模型评估指标</h2><h3 id="7-1-均方误差（MSE）"><a href="#7-1-均方误差（MSE）" class="headerlink" title="7.1 均方误差（MSE）"></a>7.1 均方误差（MSE）</h3><p>$$ \text{MSE} &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^{m} (y^{(i)} - \hat{y}^{(i)})^2 $$</p>
+<ul>
+<li>值越小越好</li>
+<li>对异常值敏感</li>
+</ul>
+<h3 id="7-2-均方根误差（RMSE）"><a href="#7-2-均方根误差（RMSE）" class="headerlink" title="7.2 均方根误差（RMSE）"></a>7.2 均方根误差（RMSE）</h3><p>$$ \text{RMSE} &#x3D; \sqrt{\frac{1}{m} \sum_{i&#x3D;1}^{m} (y^{(i)} - \hat{y}^{(i)})^2} $$</p>
+<ul>
+<li>与原始数据单位一致</li>
+<li>更直观</li>
+</ul>
+<h3 id="7-3-平均绝对误差（MAE）"><a href="#7-3-平均绝对误差（MAE）" class="headerlink" title="7.3 平均绝对误差（MAE）"></a>7.3 平均绝对误差（MAE）</h3><p>$$ \text{MAE} &#x3D; \frac{1}{m} \sum_{i&#x3D;1}^{m} |y^{(i)} - \hat{y}^{(i)}| $$</p>
+<ul>
+<li>对异常值不敏感</li>
+<li>解释性好</li>
+</ul>
+<h3 id="7-4-决定系数（R²）"><a href="#7-4-决定系数（R²）" class="headerlink" title="7.4 决定系数（R²）"></a>7.4 决定系数（R²）</h3><p>$$ R^2 &#x3D; 1 - \frac{\sum_{i&#x3D;1}^{m} (y^{(i)} - \hat{y}^{(i)})^2}{\sum_{i&#x3D;1}^{m} (y^{(i)} - \bar{y})^2} $$</p>
+<ul>
+<li>取值范围：$(-\infty, 1]$</li>
+<li>越接近1，模型拟合越好</li>
+<li>可为负值（模型比均值预测还差）</li>
+</ul>
+<hr>
+<h2 id="八、多项式回归"><a href="#八、多项式回归" class="headerlink" title="八、多项式回归"></a>八、多项式回归</h2><h3 id="8-1-基本思想"><a href="#8-1-基本思想" class="headerlink" title="8.1 基本思想"></a>8.1 基本思想</h3><p>通过添加特征的高次项，将线性模型扩展为非线性模型：</p>
+<p>$$ h(x) &#x3D; w_0 + w_1x + w_2x^2 + \cdots + w_dx^d $$</p>
+<h3 id="8-2-实现方法"><a href="#8-2-实现方法" class="headerlink" title="8.2 实现方法"></a>8.2 实现方法</h3><p>将原始特征 $x$ 转换为 $[x, x^2, x^3, …, x^d]$，然后应用线性回归。</p>
+<h3 id="8-3-注意事项"><a href="#8-3-注意事项" class="headerlink" title="8.3 注意事项"></a>8.3 注意事项</h3><ul>
+<li>容易过拟合，需要正则化</li>
+<li>特征维度增加，计算成本上升</li>
+<li>需要特征缩放</li>
+</ul>
+<hr>
+<h2 id="九、应用场景"><a href="#九、应用场景" class="headerlink" title="九、应用场景"></a>九、应用场景</h2><h3 id="9-1-经济金融"><a href="#9-1-经济金融" class="headerlink" title="9.1 经济金融"></a>9.1 经济金融</h3><ul>
+<li>股票价格预测</li>
+<li>房价预测</li>
+<li>销售额预测</li>
+<li>经济指标分析</li>
+</ul>
+<h3 id="9-2-医疗健康"><a href="#9-2-医疗健康" class="headerlink" title="9.2 医疗健康"></a>9.2 医疗健康</h3><ul>
+<li>药物剂量与疗效关系</li>
+<li>疾病风险因素分析</li>
+<li>医疗费用预测</li>
+</ul>
+<h3 id="9-3-工程技术"><a href="#9-3-工程技术" class="headerlink" title="9.3 工程技术"></a>9.3 工程技术</h3><ul>
+<li>材料性能预测</li>
+<li>设备寿命预测</li>
+<li>能源消耗预测</li>
+</ul>
+<h3 id="9-4-社会科学"><a href="#9-4-社会科学" class="headerlink" title="9.4 社会科学"></a>9.4 社会科学</h3><ul>
+<li>教育成绩影响因素分析</li>
+<li>收入与消费关系研究</li>
+<li>人口增长预测</li>
+</ul>
+<hr>
+<h2 id="十、优缺点分析"><a href="#十、优缺点分析" class="headerlink" title="十、优缺点分析"></a>十、优缺点分析</h2><h3 id="10-1-优点"><a href="#10-1-优点" class="headerlink" title="10.1 优点"></a>10.1 优点</h3><p>✅ <strong>简单高效</strong>：计算复杂度低，易于理解和实现<br>✅ <strong>可解释性强</strong>：权重直接反映特征重要性<br>✅ <strong>理论基础扎实</strong>：源于统计学，数学性质良好<br>✅ <strong>计算速度快</strong>：适合大规模数据<br>✅ <strong>可扩展性好</strong>：可通过多项式扩展处理非线性问题  </p>
+<h3 id="10-2-缺点"><a href="#10-2-缺点" class="headerlink" title="10.2 缺点"></a>10.2 缺点</h3><p>❌ <strong>线性假设限制</strong>：只能建模线性关系<br>❌ <strong>对异常值敏感</strong>：需要数据预处理<br>❌ <strong>多重共线性问题</strong>：特征高度相关时性能下降<br>❌ <strong>需要特征工程</strong>：对非线性关系需要手动处理<br>❌ <strong>外推能力有限</strong>：超出训练数据范围的预测不可靠  </p>
+<hr>
+<h2 id="十一、实现示例"><a href="#十一、实现示例" class="headerlink" title="十一、实现示例"></a>十一、实现示例</h2><h3 id="11-1-手动实现（梯度下降）"><a href="#11-1-手动实现（梯度下降）" class="headerlink" title="11.1 手动实现（梯度下降）"></a>11.1 手动实现（梯度下降）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearRegression</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, learning_rate=<span class="number">0.01</span>, n_iterations=<span class="number">1000</span></span>):</span><br><span class="line">        <span class="variable language_">self</span>.lr = learning_rate</span><br><span class="line">        <span class="variable language_">self</span>.n_iterations = n_iterations</span><br><span class="line">        <span class="variable language_">self</span>.weights = <span class="literal">None</span></span><br><span class="line">        <span class="variable language_">self</span>.bias = <span class="literal">None</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">fit</span>(<span class="params">self, X, y</span>):</span><br><span class="line">        n_samples, n_features = X.shape</span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 初始化参数</span></span><br><span class="line">        <span class="variable language_">self</span>.weights = np.zeros(n_features)</span><br><span class="line">        <span class="variable language_">self</span>.bias = <span class="number">0</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment"># 梯度下降</span></span><br><span class="line">        <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="variable language_">self</span>.n_iterations):</span><br><span class="line">            <span class="comment"># 预测</span></span><br><span class="line">            y_pred = np.dot(X, <span class="variable language_">self</span>.weights) + <span class="variable language_">self</span>.bias</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 计算梯度</span></span><br><span class="line">            dw = (<span class="number">1</span> / n_samples) * np.dot(X.T, (y_pred - y))</span><br><span class="line">            db = (<span class="number">1</span> / n_samples) * np.<span class="built_in">sum</span>(y_pred - y)</span><br><span class="line">            </span><br><span class="line">            <span class="comment"># 更新参数</span></span><br><span class="line">            <span class="variable language_">self</span>.weights -= <span class="variable language_">self</span>.lr * dw</span><br><span class="line">            <span class="variable language_">self</span>.bias -= <span class="variable language_">self</span>.lr * db</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, X</span>):</span><br><span class="line">        <span class="keyword">return</span> np.dot(X, <span class="variable language_">self</span>.weights) + <span class="variable language_">self</span>.bias</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">score</span>(<span class="params">self, X, y</span>):</span><br><span class="line">        y_pred = <span class="variable language_">self</span>.predict(X)</span><br><span class="line">        ss_res = np.<span class="built_in">sum</span>((y - y_pred) ** <span class="number">2</span>)</span><br><span class="line">        ss_tot = np.<span class="built_in">sum</span>((y - np.mean(y)) ** <span class="number">2</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> - (ss_res / ss_tot)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成示例数据</span></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line">X = <span class="number">2</span> * np.random.rand(<span class="number">100</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">4</span> + <span class="number">3</span> * X + np.random.randn(<span class="number">100</span>, <span class="number">1</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 训练模型</span></span><br><span class="line">model = LinearRegression(learning_rate=<span class="number">0.1</span>, n_iterations=<span class="number">1000</span>)</span><br><span class="line">model.fit(X, y)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预测和评估</span></span><br><span class="line">y_pred = model.predict(X)</span><br><span class="line">r2_score = model.score(X, y)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;权重: <span class="subst">&#123;model.weights[<span class="number">0</span>]:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;偏置: <span class="subst">&#123;model.bias:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;R²分数: <span class="subst">&#123;r2_score:<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 可视化</span></span><br><span class="line">plt.scatter(X, y, color=<span class="string">&#x27;blue&#x27;</span>, label=<span class="string">&#x27;实际数据&#x27;</span>)</span><br><span class="line">plt.plot(X, y_pred, color=<span class="string">&#x27;red&#x27;</span>, label=<span class="string">&#x27;预测线&#x27;</span>)</span><br><span class="line">plt.xlabel(<span class="string">&#x27;X&#x27;</span>)</span><br><span class="line">plt.ylabel(<span class="string">&#x27;y&#x27;</span>)</span><br><span class="line">plt.title(<span class="string">&#x27;线性回归拟合&#x27;</span>)</span><br><span class="line">plt.legend()</span><br><span class="line">plt.grid(<span class="literal">True</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-2-使用Scikit-learn"><a href="#11-2-使用Scikit-learn" class="headerlink" title="11.2 使用Scikit-learn"></a>11.2 使用Scikit-learn</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.linear_model <span class="keyword">import</span> LinearRegression, Ridge, Lasso</span><br><span class="line"><span class="keyword">from</span> sklearn.model_selection <span class="keyword">import</span> train_test_split</span><br><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> StandardScaler</span><br><span class="line"><span class="keyword">from</span> sklearn.metrics <span class="keyword">import</span> mean_squared_error, r2_score</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> pandas <span class="keyword">as</span> pd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 准备数据</span></span><br><span class="line"><span class="comment"># 假设我们有一个房价数据集</span></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line">X = np.random.rand(<span class="number">1000</span>, <span class="number">3</span>) * <span class="number">100</span>  <span class="comment"># 3个特征</span></span><br><span class="line">y = <span class="number">10</span> + <span class="number">2</span>*X[:, <span class="number">0</span>] + <span class="number">3</span>*X[:, <span class="number">1</span>] - <span class="number">1.5</span>*X[:, <span class="number">2</span>] + np.random.randn(<span class="number">1000</span>) * <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 划分训练集和测试集</span></span><br><span class="line">X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 特征缩放</span></span><br><span class="line">scaler = StandardScaler()</span><br><span class="line">X_train_scaled = scaler.fit_transform(X_train)</span><br><span class="line">X_test_scaled = scaler.transform(X_test)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 训练普通线性回归模型</span></span><br><span class="line">lr_model = LinearRegression()</span><br><span class="line">lr_model.fit(X_train_scaled, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 训练岭回归模型（L2正则化）</span></span><br><span class="line">ridge_model = Ridge(alpha=<span class="number">1.0</span>)</span><br><span class="line">ridge_model.fit(X_train_scaled, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 训练Lasso回归模型（L1正则化）</span></span><br><span class="line">lasso_model = Lasso(alpha=<span class="number">0.1</span>)</span><br><span class="line">lasso_model.fit(X_train_scaled, y_train)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 预测</span></span><br><span class="line">y_pred_lr = lr_model.predict(X_test_scaled)</span><br><span class="line">y_pred_ridge = ridge_model.predict(X_test_scaled)</span><br><span class="line">y_pred_lasso = lasso_model.predict(X_test_scaled)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. 评估</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;普通线性回归:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  MSE: <span class="subst">&#123;mean_squared_error(y_test, y_pred_lr):<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  R²: <span class="subst">&#123;r2_score(y_test, y_pred_lr):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  系数: <span class="subst">&#123;lr_model.coef_&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n岭回归 (Ridge):&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  MSE: <span class="subst">&#123;mean_squared_error(y_test, y_pred_ridge):<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  R²: <span class="subst">&#123;r2_score(y_test, y_pred_ridge):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  系数: <span class="subst">&#123;ridge_model.coef_&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\nLasso回归:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  MSE: <span class="subst">&#123;mean_squared_error(y_test, y_pred_lasso):<span class="number">.2</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  R²: <span class="subst">&#123;r2_score(y_test, y_pred_lasso):<span class="number">.4</span>f&#125;</span>&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;  系数: <span class="subst">&#123;lasso_model.coef_&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="11-3-多项式回归示例"><a href="#11-3-多项式回归示例" class="headerlink" title="11.3 多项式回归示例"></a>11.3 多项式回归示例</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn.preprocessing <span class="keyword">import</span> PolynomialFeatures</span><br><span class="line"><span class="keyword">from</span> sklearn.pipeline <span class="keyword">import</span> Pipeline</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成非线性数据</span></span><br><span class="line">np.random.seed(<span class="number">42</span>)</span><br><span class="line">X = np.linspace(-<span class="number">3</span>, <span class="number">3</span>, <span class="number">100</span>).reshape(-<span class="number">1</span>, <span class="number">1</span>)</span><br><span class="line">y = <span class="number">0.5</span> * X**<span class="number">3</span> - <span class="number">2</span> * X**<span class="number">2</span> + <span class="number">3</span> * X + <span class="number">5</span> + np.random.randn(<span class="number">100</span>, <span class="number">1</span>) * <span class="number">3</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建不同阶数的多项式回归模型</span></span><br><span class="line">degrees = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">10</span>]</span><br><span class="line">plt.figure(figsize=(<span class="number">15</span>, <span class="number">10</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i, degree <span class="keyword">in</span> <span class="built_in">enumerate</span>(degrees):</span><br><span class="line">    <span class="comment"># 创建管道：多项式特征 + 线性回归</span></span><br><span class="line">    model = Pipeline([</span><br><span class="line">        (<span class="string">&#x27;poly&#x27;</span>, PolynomialFeatures(degree=degree)),</span><br><span class="line">        (<span class="string">&#x27;linear&#x27;</span>, LinearRegression())</span><br><span class="line">    ])</span><br><span class="line">    </span><br><span class="line">    model.fit(X, y)</span><br><span class="line">    y_pred = model.predict(X)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 计算R²</span></span><br><span class="line">    r2 = r2_score(y, y_pred)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 绘图</span></span><br><span class="line">    plt.subplot(<span class="number">2</span>, <span class="number">3</span>, i+<span class="number">1</span>)</span><br><span class="line">    plt.scatter(X, y, color=<span class="string">&#x27;blue&#x27;</span>, alpha=<span class="number">0.5</span>, label=<span class="string">&#x27;数据&#x27;</span>)</span><br><span class="line">    plt.plot(X, y_pred, color=<span class="string">&#x27;red&#x27;</span>, linewidth=<span class="number">2</span>, label=<span class="string">f&#x27;预测 (R²=<span class="subst">&#123;r2:<span class="number">.3</span>f&#125;</span>)&#x27;</span>)</span><br><span class="line">    plt.title(<span class="string">f&#x27;多项式回归 (阶数=<span class="subst">&#123;degree&#125;</span>)&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&#x27;X&#x27;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&#x27;y&#x27;</span>)</span><br><span class="line">    plt.legend()</span><br><span class="line">    plt.grid(<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line">plt.tight_layout()</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="十二、工程实践建议"><a href="#十二、工程实践建议" class="headerlink" title="十二、工程实践建议"></a>十二、工程实践建议</h2><h3 id="12-1-数据预处理"><a href="#12-1-数据预处理" class="headerlink" title="12.1 数据预处理"></a>12.1 数据预处理</h3><ol>
+<li><strong>处理缺失值</strong>：删除或填充</li>
+<li><strong>处理异常值</strong>：识别并处理</li>
+<li><strong>特征缩放</strong>：标准化或归一化</li>
+<li><strong>特征编码</strong>：处理分类变量</li>
+</ol>
+<h3 id="12-2-模型选择"><a href="#12-2-模型选择" class="headerlink" title="12.2 模型选择"></a>12.2 模型选择</h3><ol>
+<li><strong>特征数量少</strong>（&lt; 10000）：优先考虑正规方程</li>
+<li><strong>特征数量多</strong>：使用梯度下降</li>
+<li><strong>存在多重共线性</strong>：使用岭回归</li>
+<li><strong>需要特征选择</strong>：使用Lasso回归</li>
+</ol>
+<h3 id="12-3-超参数调优"><a href="#12-3-超参数调优" class="headerlink" title="12.3 超参数调优"></a>12.3 超参数调优</h3><ol>
+<li><strong>学习率</strong>：通过学习曲线选择合适值</li>
+<li><strong>正则化强度</strong>：使用交叉验证</li>
+<li><strong>迭代次数</strong>：监控损失函数收敛</li>
+</ol>
+<h3 id="12-4-模型诊断"><a href="#12-4-模型诊断" class="headerlink" title="12.4 模型诊断"></a>12.4 模型诊断</h3><ol>
+<li><strong>残差分析</strong>：检查残差是否随机分布</li>
+<li><strong>多重共线性检测</strong>：计算VIF（方差膨胀因子）</li>
+<li><strong>异方差性检测</strong>：绘制残差图</li>
+<li><strong>正态性检验</strong>：QQ图或Shapiro-Wilk检验</li>
+</ol>
+<h3 id="12-5-避免常见陷阱"><a href="#12-5-避免常见陷阱" class="headerlink" title="12.5 避免常见陷阱"></a>12.5 避免常见陷阱</h3><ol>
+<li><strong>过拟合</strong>：使用正则化、交叉验证</li>
+<li><strong>欠拟合</strong>：增加特征、使用多项式</li>
+<li><strong>数据泄露</strong>：确保测试集完全独立</li>
+<li><strong>忽略特征交互</strong>：考虑添加交互项</li>
+</ol>
+<hr>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>线性回归作为机器学习的基石算法，具有<strong>简单、高效、可解释</strong>的特点。虽然它只能建模线性关系，但通过<strong>多项式扩展</strong>和<strong>特征工程</strong>，可以处理许多复杂的实际问题。</p>
+<p>在实际应用中，线性回归的优势在于：</p>
+<ul>
+<li><strong>快速原型开发</strong>：快速验证想法</li>
+<li><strong>基准模型</strong>：作为复杂模型的对比基准</li>
+<li><strong>可解释性需求</strong>：需要理解特征影响的场景</li>
+</ul>
+<p>掌握线性回归不仅有助于解决实际问题，更是理解更复杂机器学习算法（如逻辑回归、神经网络）的基础。</p>
+
+      </div>
+    </div>
+    
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2026/01/22/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>逻辑回归算法详解</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2026/01/01/%E6%89%8B%E6%90%93RPC%E6%A1%86%E6%9E%B6/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      机器学习核心算法详解
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+  <div class="foot-inner">
+    <div class="foot__head">
+      
+        <div class="foot-line">
+          <div class="matts">S</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">h</div><div class="matts">u</div><div class="matts">n</div><div class="matts">g</div><div class="matts">r</div><div class="matts">y</div>
+        </div>
+      
+        <div class="foot-line">
+          <div class="matts">s</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">f</div><div class="matts">o</div><div class="matts">o</div><div class="matts">l</div><div class="matts">i</div><div class="matts">s</div><div class="matts">h</div>
+        </div>
+      
+    </div>
+    <div class="foot__body">
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Links</div>
+          <div class="foot-item__body">
+            
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://apt-x.cn">apt-x</a>
+          </div>
+        
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link+.svg" />
+            <a class="foot-link" href="mailto:0xd0e0@gmail.com?subject=申请http://example.com的友链">申请友链</a>
+          </div>
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Account</div>
+          <div class="foot-item__body">
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/logo-github.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/CVEProject">CVEProject</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      <div class="foot-item">
+        <div class="foot-item__head">Contact</div>
+        <div class="foot-item__body">
+          
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-email.svg" />
+            <a class="foot-link" href="0xd0e0@gmail.com">0xd0e0@gmail.com</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+        </div>
+      </div>
+    </div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?9c1c7e2fd009de02992beaacd49b3b30";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    
+      <script src="https://unpkg.com/js-polyfills@0.1.43/es6.js"></script>
+      <script id="MathJax-script"
+              async
+              src="https://www.unpkg.com/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    
+    
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+  
+
+  </body>
+</html>
