@@ -6,7 +6,7 @@
     <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
     <title>
       
-        Dev | apt-x
+        神经网络激活函数详解 | apt-x
       
     </title>
     <meta name="description" content=""/>
@@ -59,7 +59,8 @@
           href='/css/layout.css'/>
     
     
-  <link rel="stylesheet" type="text/css" href="/css/category.css" />
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
 
   <meta name="generator" content="Hexo 8.1.1"></head>
   <body>
@@ -140,184 +141,155 @@
     </div>
     <div class="body">
       
-  <div class="wall wall-category--plain">
-    <div class="wall-main">
-      <div class="wall-category-title">
-        <div class="title-icon"
-             style="background-image: url(/images/icon/icon-code.svg)"></div>
-        Dev
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">神经网络激活函数详解</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2026-03-01</span>
+        </div>
       </div>
-      <div class="wall-category-description">编程真好玩</div>
-      <div class="wall-category-tags">
-        <div id="tags-outer"></div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h1 id="神经网络激活函数详解"><a href="#神经网络激活函数详解" class="headerlink" title="神经网络激活函数详解"></a>神经网络激活函数详解</h1><p>在神经网络中，<strong>激活函数（Activation Function）</strong> 扮演着至关重要的角色。如果没有激活函数，无论神经网络有多少层，它的输出永远只是输入的线性组合，这使得网络只能解决简单的线性问题（比如线性回归）。</p>
+<p>激活函数的主要作用是<strong>引入非线性因素</strong>，使得神经网络能够学习和模拟复杂的非线性函数，从而具备处理图像、文本、语音等复杂数据的能力。</p>
+<hr>
+<h2 id="1-Sigmoid-函数"><a href="#1-Sigmoid-函数" class="headerlink" title="1. Sigmoid 函数"></a>1. Sigmoid 函数</h2><p>Sigmoid 是最古老也是最著名的激活函数之一，它将任意实数映射到 $(0, 1)$ 的区间内。</p>
+<ul>
+<li><strong>公式：</strong> $$f(x) &#x3D; \frac{1}{1 + e^{-x}}$$</li>
+<li><strong>特点：</strong> 曲线呈 S 型，输出可以被解释为概率（常用于二分类问题的输出层）。</li>
+<li><strong>优点：</strong> 平滑、易于求导。</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>梯度消失（Vanishing Gradient）：</strong> 当输入 $x$ 非常大或非常小时，梯度几乎为 0，导致深层网络权重无法更新。</li>
+<li><strong>非零中心化：</strong> 输出值总是正的，可能导致梯度更新出现震荡，降低收敛速度。</li>
+<li><strong>计算量：</strong> 包含指数运算，计算相对耗时。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2-Tanh-双曲正切函数"><a href="#2-Tanh-双曲正切函数" class="headerlink" title="2. Tanh (双曲正切函数)"></a>2. Tanh (双曲正切函数)</h2><p>Tanh 函数是 Sigmoid 函数的变体，它将输入映射到 $(-1, 1)$ 的区间内。</p>
+<ul>
+<li><strong>公式：</strong> $$f(x) &#x3D; \frac{e^x - e^{-x}}{e^x + e^{-x}}$$</li>
+<li><strong>特点：</strong> 形状类似于 Sigmoid，但它是<strong>零中心化</strong>的（以 0 为中心）。</li>
+<li><strong>优点：</strong> 解决了 Sigmoid 非零中心化的问题，通常在隐藏层中表现比 Sigmoid 更好。</li>
+<li><strong>缺点：</strong> 依然存在<strong>梯度消失</strong>问题（在两侧饱和区梯度接近 0）。</li>
+</ul>
+<h2 id="3-ReLU-Rectified-Linear-Unit，线性整流函数"><a href="#3-ReLU-Rectified-Linear-Unit，线性整流函数" class="headerlink" title="3. ReLU (Rectified Linear Unit，线性整流函数)"></a>3. ReLU (Rectified Linear Unit，线性整流函数)</h2><p>ReLU 是目前深度学习中最常用的默认激活函数。</p>
+<ul>
+<li><strong>公式：</strong> $$f(x) &#x3D; \max(0, x)$$</li>
+<li><strong>优点：</strong><ul>
+<li><strong>解决正区间梯度消失：</strong> 在 $x &gt; 0$ 区域，梯度恒为 1。</li>
+<li><strong>计算效率高：</strong> 只有阈值判断，没有指数运算。</li>
+<li><strong>稀疏性：</strong> 部分神经元输出为 0，减少了参数间的相互依赖。</li>
+</ul>
+</li>
+<li><strong>缺点：</strong><ul>
+<li><strong>神经元死亡（Dying ReLU）：</strong> 负区间梯度为 0，一旦神经元进入负区可能永远无法被激活更新。</li>
+</ul>
+</li>
+</ul>
+<h2 id="4-Leaky-ReLU"><a href="#4-Leaky-ReLU" class="headerlink" title="4. Leaky ReLU"></a>4. Leaky ReLU</h2><p>为了解决 ReLU 的“神经元死亡”问题而提出的变体。</p>
+<ul>
+<li><strong>公式：</strong> $$f(x) &#x3D; \max(\alpha x, x)$$ （$\alpha$ 通常取 0.01）</li>
+<li><strong>优点：</strong> 在 $x &lt; 0$ 区域保留了一个微小的梯度，避免了神经元完全停止学习。</li>
+</ul>
+<h2 id="5-Softmax"><a href="#5-Softmax" class="headerlink" title="5. Softmax"></a>5. Softmax</h2><p>Softmax 专用于<strong>多分类神经网络的输出层</strong>。</p>
+<ul>
+<li><strong>公式：</strong> $$f(x_i) &#x3D; \frac{e^{x_i}}{\sum_{j&#x3D;1}^{K} e^{x_j}}$$</li>
+<li><strong>特点：</strong> 将向量转换为概率分布，所有输出之和为 1。</li>
+</ul>
+<hr>
+<h2 id="激活函数对比汇总表"><a href="#激活函数对比汇总表" class="headerlink" title="激活函数对比汇总表"></a>激活函数对比汇总表</h2><table>
+<thead>
+<tr>
+<th align="left">激活函数</th>
+<th align="left">公式</th>
+<th align="left">输出范围</th>
+<th align="left">优点</th>
+<th align="left">缺点</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>Sigmoid</strong></td>
+<td align="left">$1&#x2F;(1+e^{-x})$</td>
+<td align="left">$(0, 1)$</td>
+<td align="left">平滑、解释性强</td>
+<td align="left">梯度消失、非零中心</td>
+</tr>
+<tr>
+<td align="left"><strong>Tanh</strong></td>
+<td align="left">$(e^x-e^{-x})&#x2F;(e^x+e^{-x})$</td>
+<td align="left">$(-1, 1)$</td>
+<td align="left">零中心化</td>
+<td align="left">梯度消失</td>
+</tr>
+<tr>
+<td align="left"><strong>ReLU</strong></td>
+<td align="left">$\max(0, x)$</td>
+<td align="left">$[0, \infty)$</td>
+<td align="left">计算快、缓解梯度消失</td>
+<td align="left">神经元死亡</td>
+</tr>
+<tr>
+<td align="left"><strong>Leaky ReLU</strong></td>
+<td align="left">$\max( lpha x, x)$</td>
+<td align="left">$(-\infty, \infty)$</td>
+<td align="left">解决 ReLU 死亡问题</td>
+<td align="left">$ lpha$ 参数需额外调节</td>
+</tr>
+<tr>
+<td align="left"><strong>Softmax</strong></td>
+<td align="left">$e^{x_i} &#x2F; \sum e^{x_j}$</td>
+<td align="left">$(0, 1)$</td>
+<td align="left">适用于多分类</td>
+<td align="left">仅用于输出层</td>
+</tr>
+</tbody></table>
+<hr>
+<img src="/2026/03/01/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/c0c2263b-b729-44f9-8d4a-d1064303a968.png" class="" title="图片描述">
       </div>
     </div>
-  </div>
-  <div class="post-list">
     
-      
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
   
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/03/01/%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%BF%80%E6%B4%BB%E5%87%BD%E6%95%B0%E8%AF%A6%E8%A7%A3/" class="post-title hover-line">神经网络激活函数详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
+    <div class="post-nav-item-left"></div>
   
-
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2026/02/28/%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86%EF%BC%88Automatic-Differentiation%EF%BC%89/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      自动微分（Automatic Differentiation）
+    </a>
+  
 </div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/02/28/%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86%EF%BC%88Automatic-Differentiation%EF%BC%89/" class="post-title hover-line">自动微分（Automatic Differentiation）</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/02/13/%E6%B7%B7%E6%B7%86%E7%9F%A9%E9%98%B5/" class="post-title hover-line">混淆矩阵（Confusion Matrix）详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/02/02/K-means%E7%AE%97%E6%B3%95/" class="post-title hover-line">K-means算法详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/01/22/%E9%80%BB%E8%BE%91%E5%9B%9E%E5%BD%92%E7%AE%97%E6%B3%95%E8%AF%A6%E8%A7%A3/" class="post-title hover-line">逻辑回归算法详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/01/11/%E7%BA%BF%E6%80%A7%E5%9B%9E%E5%BD%92%E7%AE%97%E6%B3%95/" class="post-title hover-line">一文读懂线性回归算法</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2026/01/01/%E6%89%8B%E6%90%93RPC%E6%A1%86%E6%9E%B6/" class="post-title hover-line">机器学习核心算法详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2025/12/08/Netty%E5%AE%9E%E6%88%98%E5%85%A5%E9%97%A8%E8%AF%A6%E8%A7%A3/" class="post-title hover-line">Netty实战入门详解</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
-  
-  <div class="post-card">
-    <div class="post__head">
-      <a href="/2024/06/14/%E4%B8%80%E7%BB%B4%E6%95%B0%E6%8D%AE%E7%9A%84%E5%8D%B7%E7%A7%AF%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9CCNN%E5%AE%9E%E7%8E%B0/" class="post-title hover-line">一维数据的卷积神经网络CNN实现</a>
-      
-    </div>
-    <div class="post__body">
-      
-      <div class="post-excerpt"></div>
-    </div>
-    <div class="post__foot">
-      <div class="post-tags">
-  
-
-</div>
-    </div>
-  </div>
-
 
     
     
