@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        Milvus vs MySQL：向量数据库与关系型数据库深度对比 | apt-x
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 8.1.1"></head>
+  <body>
+    
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/dev">Dev</a>
+              
+                <a class="nav-menu-item" href="/sec">Sec</a>
+              
+            
+            
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">Milvus vs MySQL：向量数据库与关系型数据库深度对比</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2026-03-18</span>
+        </div>
+      </div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <blockquote>
+<p>涵盖数据模型、存储引擎、索引类型、距离度量、代码实现与互补架构设计</p>
+</blockquote>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E4%B8%80%E6%A6%82%E8%BF%B0%E4%B8%8E%E5%AE%9A%E4%BD%8D%E5%B7%AE%E5%BC%82">概述与定位差异</a></li>
+<li><a href="#%E4%BA%8C%E6%A0%B8%E5%BF%83%E5%B7%AE%E5%BC%82%E5%A4%9A%E7%BB%B4%E5%AF%B9%E6%AF%94">核心差异多维对比（数据模型 &#x2F; 存储引擎 &#x2F; 适用场景 &#x2F; 查询方式）</a></li>
+<li><a href="#%E4%B8%89milvus-%E7%B4%A2%E5%BC%95%E7%B1%BB%E5%9E%8B%E8%AF%A6%E8%A7%A3">Milvus 索引类型详解（FLAT &#x2F; IVF 系列 &#x2F; HNSW &#x2F; ANNOY &#x2F; DiskANN 等）</a></li>
+<li><a href="#%E5%9B%9Bmilvus-%E8%B7%9D%E7%A6%BB%E5%BA%A6%E9%87%8F%E6%96%B9%E5%BC%8F">Milvus 距离度量方式（L2 &#x2F; IP &#x2F; COSINE &#x2F; HAMMING &#x2F; JACCARD）</a></li>
+<li><a href="#%E4%BA%94milvus-%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0%E7%A4%BA%E4%BE%8B">Milvus 完整代码实现示例（连接 → Schema → 索引 → 增删改查）</a></li>
+<li><a href="#%E5%85%AD%E4%B8%A4%E8%80%85%E4%BA%92%E8%A1%A5%E9%85%8D%E5%90%88%E4%BD%BF%E7%94%A8%E6%96%B9%E6%A1%88">两者互补配合使用方案</a></li>
+<li><a href="#%E4%B8%83%E9%80%89%E5%9E%8B%E5%86%B3%E7%AD%96%E5%BB%BA%E8%AE%AE">选型决策建议</a></li>
+</ol>
+<hr>
+<h2 id="一、概述与定位差异"><a href="#一、概述与定位差异" class="headerlink" title="一、概述与定位差异"></a>一、概述与定位差异</h2><p><strong>MySQL</strong> 是成熟的关系型数据库（RDBMS），以结构化表格存储数据，通过 SQL 进行精确的事务查询（OLTP），适合存储订单、用户、账户等强一致性业务数据。</p>
+<p><strong>Milvus</strong> 是开源的云原生向量数据库，专为 AI 时代的高维向量相似度检索而生，通过近似最近邻搜索（ANN）在海量向量中毫秒级找到”最相似”的结果，广泛用于推荐系统、图像&#x2F;文本&#x2F;语音检索、RAG 知识库等场景。</p>
+<blockquote>
+<p>💡 <strong>一句话定位</strong></p>
+<p>MySQL 回答的是 <strong>“哪些数据满足这个条件”</strong>（精确匹配）；Milvus 回答的是 <strong>“哪些数据和这条数据最像”</strong>（相似度匹配）。两者解决的是截然不同的问题，而非替代关系。</p>
+</blockquote>
+<hr>
+<h2 id="二、核心差异多维对比"><a href="#二、核心差异多维对比" class="headerlink" title="二、核心差异多维对比"></a>二、核心差异多维对比</h2><h3 id="2-1-总览对比表"><a href="#2-1-总览对比表" class="headerlink" title="2.1 总览对比表"></a>2.1 总览对比表</h3><table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th><strong>Milvus</strong> 向量数据库</th>
+<th><strong>MySQL</strong> 关系型数据库</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>设计目标</strong></td>
+<td>高维向量相似度检索（ANN）</td>
+<td>结构化数据的事务处理（OLTP）</td>
+</tr>
+<tr>
+<td><strong>数据模型</strong></td>
+<td>Collection（集合）+ Entity，含向量字段与标量字段，支持动态 Schema</td>
+<td>Table（表）+ Row&#x2F;Column，固定列 Schema，关系模型</td>
+</tr>
+<tr>
+<td><strong>存储引擎</strong></td>
+<td>计算存储分离：对象存储（MinIO&#x2F;S3）+ 消息队列 + 计算节点</td>
+<td>InnoDB（默认，B+树 + 行存储）&#x2F; MyISAM</td>
+</tr>
+<tr>
+<td><strong>索引结构</strong></td>
+<td>向量索引（HNSW&#x2F;IVF&#x2F;DiskANN）+ 标量索引（倒排&#x2F;BITMAP）</td>
+<td>B+Tree、Hash、Full-text、空间索引</td>
+</tr>
+<tr>
+<td><strong>查询方式</strong></td>
+<td>向量相似度搜索（top-K 近邻）+ 标量过滤混合查询</td>
+<td>SQL 结构化查询（SELECT&#x2F;WHERE&#x2F;JOIN&#x2F;GROUP BY）</td>
+</tr>
+<tr>
+<td><strong>查询结果</strong></td>
+<td><strong>近似</strong>结果（ANN），按相似度排序，召回率可调</td>
+<td><strong>精确</strong>结果，100% 匹配条件</td>
+</tr>
+<tr>
+<td><strong>事务支持</strong></td>
+<td>有限（无完整 ACID，最终一致性为主）</td>
+<td>完整 ACID 事务、MVCC、行级锁</td>
+</tr>
+<tr>
+<td><strong>数据规模</strong></td>
+<td>亿级~百亿级向量</td>
+<td>单表千万级（水平扩展需分库分表）</td>
+</tr>
+<tr>
+<td><strong>典型负载</strong></td>
+<td>高吞吐读、批量写、向量计算密集</td>
+<td>高并发读写混合、事务密集</td>
+</tr>
+</tbody></table>
+<h3 id="2-2-数据模型差异"><a href="#2-2-数据模型差异" class="headerlink" title="2.2 数据模型差异"></a>2.2 数据模型差异</h3><table>
+<thead>
+<tr>
+<th>方面</th>
+<th>Milvus</th>
+<th>MySQL</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>基本单元</strong></td>
+<td>Collection（集合）→ Entity（实体）</td>
+<td>Table（表）→ Row（行）</td>
+</tr>
+<tr>
+<td><strong>字段类型</strong></td>
+<td>向量字段（FLOAT_VECTOR&#x2F;BINARY_VECTOR）+ 标量字段（INT64&#x2F;VARCHAR&#x2F;JSON&#x2F;ARRAY 等）</td>
+<td>INT&#x2F;VARCHAR&#x2F;TEXT&#x2F;DECIMAL&#x2F;DATETIME 等丰富的标量类型</td>
+</tr>
+<tr>
+<td><strong>Schema 灵活性</strong></td>
+<td>支持<strong>动态字段</strong>（Dynamic Field），可存储未预定义的 JSON 字段</td>
+<td>固定列定义，加列需 ALTER TABLE</td>
+</tr>
+<tr>
+<td><strong>主键</strong></td>
+<td>支持 INT64 或 VARCHAR 主键，可自增</td>
+<td>主键、唯一键、自增列</td>
+</tr>
+<tr>
+<td><strong>关系关联</strong></td>
+<td>无外键、无 JOIN，通过标量过滤做简单关联</td>
+<td>外键约束、JOIN、关系完整性</td>
+</tr>
+<tr>
+<td><strong>向量化</strong></td>
+<td>原生支持，向量是一等公民</td>
+<td>不支持（需外部计算）</td>
+</tr>
+</tbody></table>
+<h3 id="2-3-存储引擎差异"><a href="#2-3-存储引擎差异" class="headerlink" title="2.3 存储引擎差异"></a>2.3 存储引擎差异</h3><h4 id="Milvus-存储架构（云原生-计算存储分离）"><a href="#Milvus-存储架构（云原生-计算存储分离）" class="headerlink" title="Milvus 存储架构（云原生 &#x2F; 计算存储分离）"></a>Milvus 存储架构（云原生 &#x2F; 计算存储分离）</h4><ul>
+<li><strong>对象存储</strong>（MinIO &#x2F; AWS S3 &#x2F; Azure Blob）：存放日志、向量数据段（segment）、索引文件，成本极低、容量近乎无限。</li>
+<li><strong>消息队列</strong>（Pulsar &#x2F; Kafka &#x2F; RocksMQ）：实现写入流的 WAL（预写日志），保证数据可靠传输到计算节点。</li>
+<li><strong>计算节点</strong>：Query Node（查询）、Data Node（写入）、Index Node（构建索引）分离部署，各自独立扩缩容。</li>
+<li><strong>元数据存储</strong>（etcd）：存储 Collection Schema、节点拓扑、分段信息等元数据。</li>
+</ul>
+<p>这种架构使 Milvus 可水平扩展到百亿级向量，存储与计算可独立扩容，但写入延迟相对 MySQL 较高（毫秒~秒级，最终一致性）。</p>
+<h4 id="MySQL-存储架构（InnoDB）"><a href="#MySQL-存储架构（InnoDB）" class="headerlink" title="MySQL 存储架构（InnoDB）"></a>MySQL 存储架构（InnoDB）</h4><ul>
+<li><strong>Buffer Pool</strong>：内存缓存热数据页，减少磁盘 IO。</li>
+<li><strong>B+Tree 聚簇索引</strong>：数据按主键聚簇存储，叶子节点即完整行数据。</li>
+<li><strong>Redo Log &#x2F; Undo Log &#x2F; Binlog</strong>：保证 ACID 事务、崩溃恢复、主从复制。</li>
+<li><strong>行存储 + 行级锁 + MVCC</strong>：支持高并发事务，读写冲突可控。</li>
+</ul>
+<p>MySQL 在单机事务性能上远超 Milvus，但扩展性受限于单机存储和分库分表方案的复杂度。</p>
+<h3 id="2-4-查询方式差异（核心）"><a href="#2-4-查询方式差异（核心）" class="headerlink" title="2.4 查询方式差异（核心）"></a>2.4 查询方式差异（核心）</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>Milvus（向量相似度搜索）</th>
+<th>MySQL（结构化查询）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>查询语义</strong></td>
+<td>“找最相似的 top-K 条”</td>
+<td>“找满足条件的所有行”</td>
+</tr>
+<tr>
+<td><strong>查询输入</strong></td>
+<td>一个查询向量 + top-K + 过滤表达式</td>
+<td>SQL 语句（WHERE 条件）</td>
+</tr>
+<tr>
+<td><strong>匹配方式</strong></td>
+<td>计算向量距离，<strong>近似</strong>检索（ANN）</td>
+<td>B+Tree 精确匹配 &#x2F; 范围扫描</td>
+</tr>
+<tr>
+<td><strong>结果排序</strong></td>
+<td>按相似度（距离）从近到远排序</td>
+<td>按 ORDER BY 指定字段排序</td>
+</tr>
+<tr>
+<td><strong>结果确定性</strong></td>
+<td>近似结果，召回率与延迟可权衡（调参）</td>
+<td>100% 确定结果，符合条件必返回</td>
+</tr>
+<tr>
+<td><strong>典型查询</strong></td>
+<td><code>search(query_vector, top_k=10)</code></td>
+<td><code>SELECT * FROM t WHERE id = 1</code></td>
+</tr>
+<tr>
+<td><strong>混合查询</strong></td>
+<td>支持”向量相似 + 标量过滤”组合（如”找相似图片且价格&lt;100”）</td>
+<td>支持多条件 WHERE + JOIN</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>关键认知</strong></p>
+<p>MySQL 的查询是”精确条件 → 全量命中”，无法回答”语义相似”问题。例如搜”红色的花”，MySQL 只能匹配 <code>color=&#39;红&#39;</code> 的精确字段，无法识别图片中”红色花朵”的视觉相似性——而这正是 Milvus 的核心能力。</p>
+</blockquote>
+<hr>
+<h2 id="三、Milvus-索引类型详解"><a href="#三、Milvus-索引类型详解" class="headerlink" title="三、Milvus 索引类型详解"></a>三、Milvus 索引类型详解</h2><p>Milvus 针对浮点向量（FLOAT_VECTOR）和二值向量（BINARY_VECTOR）分别提供不同的索引类型。以下按”暴力搜索 → 倒排量化类 → 图索引类 → 磁盘类 → 二值类”逐一说明。</p>
+<h3 id="3-1-浮点向量索引"><a href="#3-1-浮点向量索引" class="headerlink" title="3.1 浮点向量索引"></a>3.1 浮点向量索引</h3><hr>
+<h4 id="①-FLAT（暴力搜索）-精确"><a href="#①-FLAT（暴力搜索）-精确" class="headerlink" title="① FLAT（暴力搜索） 精确"></a>① FLAT（暴力搜索） <code>精确</code></h4><ul>
+<li><strong>原理</strong>：线性扫描，逐一计算查询向量与库中所有向量的距离，不做任何近似。</li>
+<li><strong>召回率</strong>：100%（精确结果）</li>
+<li><strong>查询速度</strong>：慢，O(n) 复杂度</li>
+</ul>
+<p><strong>✓ 优点</strong>：结果完全精确，无需训练&#x2F;构建索引，无精度损失。</p>
+<p><strong>✗ 缺点</strong>：数据量大时查询极慢，内存占用高。</p>
+<p><strong>适用场景</strong>：数据量小（百万级以下）、要求 100% 召回率、用于评估其他 ANN 索引效果的基准。</p>
+<hr>
+<h4 id="②-IVF-FLAT（倒排-簇内暴力）-均衡"><a href="#②-IVF-FLAT（倒排-簇内暴力）-均衡" class="headerlink" title="② IVF_FLAT（倒排 + 簇内暴力） 均衡"></a>② IVF_FLAT（倒排 + 簇内暴力） <code>均衡</code></h4><ul>
+<li><strong>原理</strong>：先用 K-means 将向量聚类为 <code>nlist</code> 个簇（倒排文件），查询时只在最近的 <code>nprobe</code> 个簇内做暴力搜索。</li>
+<li><strong>关键参数</strong>：<code>nlist</code>（簇数，建议 4×sqrt(n)）、<code>nprobe</code>（探测簇数，越大召回越高、速度越慢）</li>
+<li><strong>召回率</strong>：取决于 nprobe，通常 90%~99%</li>
+</ul>
+<p><strong>✓ 优点</strong>：查询速度与精度平衡良好，无量化精度损失，实现成熟。</p>
+<p><strong>✗ 缺点</strong>：需训练，内存占用与原始数据相当，大规模数据下仍偏高。</p>
+<p><strong>适用场景</strong>：中大规模数据（百万~千万），对精度有较高要求，内存充足。</p>
+<hr>
+<h4 id="③-IVF-SQ8（倒排-标量量化）-省内存"><a href="#③-IVF-SQ8（倒排-标量量化）-省内存" class="headerlink" title="③ IVF_SQ8（倒排 + 标量量化） 省内存"></a>③ IVF_SQ8（倒排 + 标量量化） <code>省内存</code></h4><ul>
+<li><strong>原理</strong>：在 IVF 基础上，对每个向量做标量量化（Scalar Quantization），将 float32（32 位）压缩为 int8（8 位），内存减少约 75%。</li>
+<li><strong>关键参数</strong>：同 IVF_FLAT（nlist &#x2F; nprobe）</li>
+<li><strong>召回率</strong>：略低于 IVF_FLAT（量化引入轻微误差）</li>
+</ul>
+<p><strong>✓ 优点</strong>：内存占用大幅降低（约 1&#x2F;4），查询速度更快，适合内存受限场景。</p>
+<p><strong>✗ 缺点</strong>：量化带来轻微精度损失，需训练。</p>
+<p><strong>适用场景</strong>：大规模数据且内存有限，可接受小幅精度损失。</p>
+<hr>
+<h4 id="④-IVF-PQ（倒排-乘积量化）-极致压缩"><a href="#④-IVF-PQ（倒排-乘积量化）-极致压缩" class="headerlink" title="④ IVF_PQ（倒排 + 乘积量化） 极致压缩"></a>④ IVF_PQ（倒排 + 乘积量化） <code>极致压缩</code></h4><ul>
+<li><strong>原理</strong>：在 IVF 基础上做乘积量化（Product Quantization）：将向量切分为 <code>m</code> 段，每段独立做 K-means 量化为码本，最终每条向量用一组短编码表示。</li>
+<li><strong>关键参数</strong>：<code>m</code>（分段数）、<code>nbits</code>（每段编码位数）、<code>nlist</code>&#x2F;<code>nprobe</code></li>
+<li><strong>压缩比</strong>：极高，可压缩至原数据的 1&#x2F;16 ~ 1&#x2F;32</li>
+</ul>
+<p><strong>✓ 优点</strong>：存储压缩极致，适合超大规模数据，查询速度快。</p>
+<p><strong>✗ 缺点</strong>：精度损失较大，不适合对召回率要求极高的场景，需训练。</p>
+<p><strong>适用场景</strong>：十亿级以上超大规模数据，优先考虑存储成本，可接受一定精度损失（如粗排召回阶段）。</p>
+<hr>
+<h4 id="⑤-HNSW（分层可导航小世界图）-性能最佳"><a href="#⑤-HNSW（分层可导航小世界图）-性能最佳" class="headerlink" title="⑤ HNSW（分层可导航小世界图） 性能最佳"></a>⑤ HNSW（分层可导航小世界图） <code>性能最佳</code></h4><ul>
+<li><strong>原理</strong>：构建多层近邻图：顶层稀疏用于快速导航（长距离跳跃），底层稠密用于精确搜索（局部细化）。查询时从顶层逐层向下贪心搜索。</li>
+<li><strong>关键参数</strong>：<code>M</code>（每层最大邻居数，建议 16~64）、<code>efConstruction</code>（建图候选集大小）、<code>ef</code>（查询候选集大小，越大越准）</li>
+<li><strong>召回率</strong>：高（通常 95%+，可调到 99%+）</li>
+</ul>
+<p><strong>✓ 优点</strong>：查询速度极快、召回率高，<strong>无需训练</strong>，支持动态增删。</p>
+<p><strong>✗ 缺点</strong>：内存占用大（存储图结构），构建索引较慢，不适合磁盘场景。</p>
+<p><strong>适用场景</strong>：对查询性能和召回率要求都高的场景（推荐系统、语义搜索），<strong>实际项目中最常用的索引</strong>。</p>
+<hr>
+<h4 id="⑥-ANNOY（基于树的-ANN）-静态"><a href="#⑥-ANNOY（基于树的-ANN）-静态" class="headerlink" title="⑥ ANNOY（基于树的 ANN） 静态"></a>⑥ ANNOY（基于树的 ANN） <code>静态</code></h4><ul>
+<li><strong>原理</strong>：随机选取两点，取垂直平分面将空间二分（构建二叉树），递归划分直到叶子节点。构建多棵这样的树组成森林，查询时聚合结果。</li>
+<li><strong>关键参数</strong>：<code>n_trees</code>（树的数量）、<code>search_k</code>（搜索节点数）</li>
+</ul>
+<p><strong>✓ 优点</strong>：支持内存映射文件（mmap），内存友好，静态数据查询稳定。</p>
+<p><strong>✗ 缺点</strong>：<strong>不支持动态删除</strong>，更新需重建索引，召回率不如 HNSW。</p>
+<p><strong>适用场景</strong>：数据相对静态（一次写入多次查询）、只读检索、内存有限的环境。</p>
+<hr>
+<h4 id="⑦-DiskANN（基于磁盘的图索引）-超大规模"><a href="#⑦-DiskANN（基于磁盘的图索引）-超大规模" class="headerlink" title="⑦ DiskANN（基于磁盘的图索引） 超大规模"></a>⑦ DiskANN（基于磁盘的图索引） <code>超大规模</code></h4><ul>
+<li><strong>原理</strong>：基于 Vamana 图算法构建近邻图，索引存储在磁盘（SSD）上，查询时按需加载图节点到内存，用缓存加速。</li>
+<li><strong>关键参数</strong>：<code>search_list_size</code>（搜索候选集大小）</li>
+<li><strong>特点</strong>：专为超大规模、内存装不下的场景设计</li>
+</ul>
+<p><strong>✓ 优点</strong>：突破内存限制，支持百亿级向量，成本远低于全内存方案。</p>
+<p><strong>✗ 缺点</strong>：查询延迟略高于纯内存索引（毫秒级），依赖 SSD 性能。</p>
+<p><strong>适用场景</strong>：数据量超出内存容量、成本敏感的超大规模检索（如全网图像去重、大规模指纹库）。</p>
+<hr>
+<h4 id="⑧-GPU-索引（GPU-CAGRA-GPU-IVF-FLAT-GPU-IVF-PQ）-GPU-加速"><a href="#⑧-GPU-索引（GPU-CAGRA-GPU-IVF-FLAT-GPU-IVF-PQ）-GPU-加速" class="headerlink" title="⑧ GPU 索引（GPU_CAGRA &#x2F; GPU_IVF_FLAT &#x2F; GPU_IVF_PQ） GPU 加速"></a>⑧ GPU 索引（GPU_CAGRA &#x2F; GPU_IVF_FLAT &#x2F; GPU_IVF_PQ） <code>GPU 加速</code></h4><ul>
+<li><strong>原理</strong>：利用 GPU 并行计算能力加速向量检索，CAGRA 是 NVIDIA 提出的基于图的 GPU ANN 算法。</li>
+<li><strong>关键参数</strong>：各算法不同，CAGRA 需 <code>intermediate_graph_degree</code>&#x2F;<code>graph_degree</code></li>
+</ul>
+<p><strong>✓ 优点</strong>：吞吐量极高，大批量查询场景下延迟显著低于 CPU。</p>
+<p><strong>✗ 缺点</strong>：需 GPU 硬件，成本高，单条查询的延迟优势不明显。</p>
+<p><strong>适用场景</strong>：高并发批量查询、已有 GPU 集群、对吞吐量要求极致的场景。</p>
+<hr>
+<h4 id="⑨-SCANN（Google-量化感知搜索）-高精度"><a href="#⑨-SCANN（Google-量化感知搜索）-高精度" class="headerlink" title="⑨ SCANN（Google 量化感知搜索） 高精度"></a>⑨ SCANN（Google 量化感知搜索） <code>高精度</code></h4><ul>
+<li><strong>原理</strong>：Google 提出的各向异性量化（Anisotropic Quantization）+ 倒排索引，针对向量分布方向优化量化误差。</li>
+<li><strong>关键参数</strong>：<code>with_raw_data</code>（是否保留原始向量）</li>
+</ul>
+<p><strong>✓ 优点</strong>：在同等压缩比下召回率优于 IVF_PQ，精度表现优秀。</p>
+<p><strong>✗ 缺点</strong>：参数调优相对复杂，需训练。</p>
+<p><strong>适用场景</strong>：对召回率和压缩比都有较高要求的中大规模场景。</p>
+<hr>
+<h3 id="3-2-二值向量索引"><a href="#3-2-二值向量索引" class="headerlink" title="3.2 二值向量索引"></a>3.2 二值向量索引</h3><table>
+<thead>
+<tr>
+<th>索引</th>
+<th>原理</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>BIN_FLAT</strong></td>
+<td>二值向量的暴力搜索，用汉明距离计算</td>
+<td>小规模二值向量，精确匹配</td>
+</tr>
+<tr>
+<td><strong>BIN_IVF_FLAT</strong></td>
+<td>二值向量的倒排索引，聚类后在簇内暴力搜索</td>
+<td>中大规模二值向量</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><em>二值向量通常由哈希算法（如 LSH）生成，占用空间小但信息量有限，适合对精度要求不高的场景。</em></p>
+</blockquote>
+<h3 id="3-3-索引选型速查表"><a href="#3-3-索引选型速查表" class="headerlink" title="3.3 索引选型速查表"></a>3.3 索引选型速查表</h3><table>
+<thead>
+<tr>
+<th>需求</th>
+<th>推荐索引</th>
+<th>理由</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据量小，要求 100% 精确</td>
+<td>FLAT</td>
+<td>无近似误差</td>
+</tr>
+<tr>
+<td>通用场景，性能与精度平衡</td>
+<td><strong>HNSW</strong></td>
+<td>速度快、召回高、无需训练（最常用）</td>
+</tr>
+<tr>
+<td>内存受限的中大规模数据</td>
+<td>IVF_SQ8</td>
+<td>压缩 75% 内存</td>
+</tr>
+<tr>
+<td>超大规模，优先省存储</td>
+<td>IVF_PQ</td>
+<td>极致压缩</td>
+</tr>
+<tr>
+<td>数据超出内存，成本敏感</td>
+<td>DiskANN</td>
+<td>磁盘存储，突破内存限制</td>
+</tr>
+<tr>
+<td>静态数据，只读查询</td>
+<td>ANNOY</td>
+<td>支持 mmap，内存友好</td>
+</tr>
+<tr>
+<td>高并发批量查询，有 GPU</td>
+<td>GPU_CAGRA</td>
+<td>GPU 并行加速</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="四、Milvus-距离度量方式"><a href="#四、Milvus-距离度量方式" class="headerlink" title="四、Milvus 距离度量方式"></a>四、Milvus 距离度量方式</h2><p>距离度量决定了”相似”的计算方式，直接影响检索效果。<strong>索引类型必须与距离度量匹配</strong>，且创建索引后不可更改。</p>
+<table>
+<thead>
+<tr>
+<th>度量</th>
+<th>公式含义</th>
+<th>值范围</th>
+<th>相似判定</th>
+<th>应用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>L2（欧氏距离）</strong></td>
+<td>向量各维度差值的平方和再开方</td>
+<td>[0, +∞)</td>
+<td>值越小越相似</td>
+<td>图像特征、通用嵌入向量；向量未归一化时使用</td>
+</tr>
+<tr>
+<td><strong>IP（内积）</strong></td>
+<td>两向量点积 a·b &#x3D; Σ(aᵢ×bᵢ)</td>
+<td>(-∞, +∞)</td>
+<td>值越大越相似</td>
+<td>向量已归一化时等价于余弦相似度；推荐系统、最大内积搜索（MIPS）</td>
+</tr>
+<tr>
+<td><strong>COSINE（余弦相似度）</strong></td>
+<td>cos(θ) &#x3D; (a·b) &#x2F; (|a|×|b|)</td>
+<td>[-1, 1]</td>
+<td>值越大越相似</td>
+<td>文本语义相似度、自然语言检索；关注方向而非模长</td>
+</tr>
+<tr>
+<td><strong>HAMMING（汉明距离）</strong></td>
+<td>两二值向量不同位的个数</td>
+<td>[0, 维度]</td>
+<td>值越小越相似</td>
+<td>二值向量检索、图像感知哈希去重</td>
+</tr>
+<tr>
+<td><strong>JACCARD（杰卡德距离）</strong></td>
+<td>1 - |A∩B| &#x2F; |A∪B|</td>
+<td>[0, 1]</td>
+<td>值越小越相似</td>
+<td>集合相似度、词袋模型、二值向量</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>💡 <strong>选型建议</strong></p>
+<ul>
+<li><strong>文本语义检索（NLP）</strong>：优先用 <code>COSINE</code>，因为文本嵌入通常关注方向相似性。若向量已归一化，<code>IP</code> 与 <code>COSINE</code> 结果一致但计算更快。</li>
+<li><strong>图像&#x2F;音频特征</strong>：常用 <code>L2</code>，因为这些特征向量通常未归一化。</li>
+<li><strong>推荐系统（MIPS）</strong>：用 <code>IP</code>，直接最大化内积得分。</li>
+<li><strong>二值向量去重</strong>：用 <code>HAMMING</code>，计算极快。</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="五、Milvus-完整代码实现示例"><a href="#五、Milvus-完整代码实现示例" class="headerlink" title="五、Milvus 完整代码实现示例"></a>五、Milvus 完整代码实现示例</h2><p>以下基于 <code>pymilvus 2.x</code>（新版 SDK，使用 <code>MilvusClient</code> 统一接口），完整演示从连接到检索的全流程。</p>
+<h3 id="5-1-环境准备与连接建立"><a href="#5-1-环境准备与连接建立" class="headerlink" title="5.1 环境准备与连接建立"></a>5.1 环境准备与连接建立</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装：pip install pymilvus</span></span><br><span class="line"><span class="keyword">from</span> pymilvus <span class="keyword">import</span> MilvusClient, DataType</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line"><span class="comment"># 连接 Milvus（以下任选其一）</span></span><br><span class="line"><span class="comment"># 方式1：连接本地 Milvus Standalone</span></span><br><span class="line">client = MilvusClient(uri=<span class="string">&quot;http://localhost:19530&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式2：使用 Milvus Lite（轻量版，数据存本地文件，适合开发测试）</span></span><br><span class="line"><span class="comment"># client = MilvusClient(&quot;./milvus_demo.db&quot;)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 方式3：连接 Zilliz Cloud（托管云服务）</span></span><br><span class="line"><span class="comment"># client = MilvusClient(</span></span><br><span class="line"><span class="comment">#     uri=&quot;https://xxx.zillizcloud.com&quot;,</span></span><br><span class="line"><span class="comment">#     token=&quot;user:password&quot;</span></span><br><span class="line"><span class="comment"># )</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Milvus 连接成功:&quot;</span>, client.list_collections())</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-2-定义-Collection-Schema（集合结构）"><a href="#5-2-定义-Collection-Schema（集合结构）" class="headerlink" title="5.2 定义 Collection Schema（集合结构）"></a>5.2 定义 Collection Schema（集合结构）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">COLLECTION_NAME = <span class="string">&quot;product_vectors&quot;</span>  <span class="comment"># 商品向量集合</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 若集合已存在则先删除（便于重复运行演示）</span></span><br><span class="line"><span class="keyword">if</span> client.has_collection(COLLECTION_NAME):</span><br><span class="line">    client.drop_collection(COLLECTION_NAME)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建 Schema</span></span><br><span class="line">schema = MilvusClient.create_schema(</span><br><span class="line">    auto_id=<span class="literal">False</span>,            <span class="comment"># 不自动生成主键（我们手动指定）</span></span><br><span class="line">    enable_dynamic_field=<span class="literal">True</span> <span class="comment"># 启用动态字段，可存储未预定义的 JSON 字段</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加字段：主键、向量、标量字段</span></span><br><span class="line">schema.add_field(<span class="string">&quot;id&quot;</span>, DataType.VARCHAR, max_length=<span class="number">64</span>, is_primary=<span class="literal">True</span>)  <span class="comment"># 主键：商品ID</span></span><br><span class="line">schema.add_field(<span class="string">&quot;embedding&quot;</span>, DataType.FLOAT_VECTOR, dim=<span class="number">512</span>)              <span class="comment"># 向量：512维商品图特征</span></span><br><span class="line">schema.add_field(<span class="string">&quot;name&quot;</span>, DataType.VARCHAR, max_length=<span class="number">128</span>)                 <span class="comment"># 商品名</span></span><br><span class="line">schema.add_field(<span class="string">&quot;price&quot;</span>, DataType.FLOAT)                                  <span class="comment"># 价格</span></span><br><span class="line">schema.add_field(<span class="string">&quot;category&quot;</span>, DataType.VARCHAR, max_length=<span class="number">32</span>)             <span class="comment"># 分类</span></span><br><span class="line">schema.add_field(<span class="string">&quot;tags&quot;</span>, DataType.ARRAY, element_type=DataType.VARCHAR,</span><br><span class="line">                 max_capacity=<span class="number">10</span>, max_length=<span class="number">32</span>)                          <span class="comment"># 标签数组</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Schema 定义完成:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(schema)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-3-创建索引"><a href="#5-3-创建索引" class="headerlink" title="5.3 创建索引"></a>5.3 创建索引</h3><blockquote>
+<p>⚠️ <strong>重要：索引创建顺序</strong></p>
+<p>新版 pymilvus 中，<strong>必须先创建 Collection（含索引参数）再加载数据</strong>。向量和标量字段分别建索引。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 向量字段索引：使用 HNSW（推荐通用选择）</span></span><br><span class="line">index_params = client.prepare_index_params()</span><br><span class="line"></span><br><span class="line">index_params.add_index(</span><br><span class="line">    field_name=<span class="string">&quot;embedding&quot;</span>,       <span class="comment"># 对向量字段建索引</span></span><br><span class="line">    index_type=<span class="string">&quot;HNSW&quot;</span>,            <span class="comment"># 索引类型</span></span><br><span class="line">    metric_type=<span class="string">&quot;COSINE&quot;</span>,         <span class="comment"># 距离度量：余弦相似度</span></span><br><span class="line">    params=&#123;</span><br><span class="line">        <span class="string">&quot;M&quot;</span>: <span class="number">16</span>,                  <span class="comment"># 每层最大邻居数，影响图密度与内存</span></span><br><span class="line">        <span class="string">&quot;efConstruction&quot;</span>: <span class="number">200</span>     <span class="comment"># 建图时候选集大小，越大建得越精细</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 标量字段索引：加速过滤查询（Milvus 2.x 支持标量倒排索引）</span></span><br><span class="line">index_params.add_index(</span><br><span class="line">    field_name=<span class="string">&quot;category&quot;</span>,</span><br><span class="line">    index_type=<span class="string">&quot;&quot;</span>,                <span class="comment"># 空字符串表示使用默认标量索引</span></span><br><span class="line">    index_name=<span class="string">&quot;category_idx&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">index_params.add_index(</span><br><span class="line">    field_name=<span class="string">&quot;price&quot;</span>,</span><br><span class="line">    index_type=<span class="string">&quot;&quot;</span>,                <span class="comment"># 数值字段标量索引</span></span><br><span class="line">    index_name=<span class="string">&quot;price_idx&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;索引参数准备完成:&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(index_params)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-4-创建-Collection-并加载"><a href="#5-4-创建-Collection-并加载" class="headerlink" title="5.4 创建 Collection 并加载"></a>5.4 创建 Collection 并加载</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建集合：指定 schema 和索引参数</span></span><br><span class="line">client.create_collection(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    schema=schema,</span><br><span class="line">    index_params=index_params</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 加载集合到内存（查询前必须 load，写入可不必）</span></span><br><span class="line">client.load_collection(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;集合 &#x27;<span class="subst">&#123;COLLECTION_NAME&#125;</span>&#x27; 已创建并加载到内存&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合信息</span></span><br><span class="line">desc = client.describe_collection(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;集合信息: <span class="subst">&#123;desc&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-5-数据插入（Insert）"><a href="#5-5-数据插入（Insert）" class="headerlink" title="5.5 数据插入（Insert）"></a>5.5 数据插入（Insert）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 模拟商品向量数据</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">generate_mock_products</span>(<span class="params">n=<span class="number">1000</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;生成 n 条模拟商品数据&quot;&quot;&quot;</span></span><br><span class="line">    np.random.seed(<span class="number">42</span>)</span><br><span class="line">    data = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">        item = &#123;</span><br><span class="line">            <span class="string">&quot;id&quot;</span>: <span class="string">f&quot;P<span class="subst">&#123;i:06d&#125;</span>&quot;</span>,</span><br><span class="line">            <span class="string">&quot;embedding&quot;</span>: np.random.randn(<span class="number">512</span>).tolist(),  <span class="comment"># 512维向量</span></span><br><span class="line">            <span class="string">&quot;name&quot;</span>: <span class="string">f&quot;商品_<span class="subst">&#123;i&#125;</span>&quot;</span>,</span><br><span class="line">            <span class="string">&quot;price&quot;</span>: <span class="built_in">round</span>(np.random.uniform(<span class="number">10</span>, <span class="number">999</span>), <span class="number">2</span>),</span><br><span class="line">            <span class="string">&quot;category&quot;</span>: np.random.choice([<span class="string">&quot;手机&quot;</span>, <span class="string">&quot;电脑&quot;</span>, <span class="string">&quot;服饰&quot;</span>, <span class="string">&quot;食品&quot;</span>, <span class="string">&quot;图书&quot;</span>]),</span><br><span class="line">            <span class="string">&quot;tags&quot;</span>: np.random.choice([<span class="string">&quot;热销&quot;</span>, <span class="string">&quot;新品&quot;</span>, <span class="string">&quot;折扣&quot;</span>, <span class="string">&quot;限量&quot;</span>],</span><br><span class="line">                                     size=np.random.randint(<span class="number">1</span>, <span class="number">4</span>)).tolist()</span><br><span class="line">        &#125;</span><br><span class="line">        data.append(item)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成数据</span></span><br><span class="line">products = generate_mock_products(<span class="number">1000</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 分批插入（建议每批 1000~5000 条）</span></span><br><span class="line">BATCH_SIZE = <span class="number">500</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>, <span class="built_in">len</span>(products), BATCH_SIZE):</span><br><span class="line">    batch = products[i:i+BATCH_SIZE]</span><br><span class="line">    result = client.insert(</span><br><span class="line">        collection_name=COLLECTION_NAME,</span><br><span class="line">        data=batch</span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;第 <span class="subst">&#123;i//BATCH_SIZE + <span class="number">1</span>&#125;</span> 批插入完成，影响行数: <span class="subst">&#123;result[<span class="string">&#x27;insert_count&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合行数</span></span><br><span class="line">stats = client.get_collection_stats(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;集合当前数据量: <span class="subst">&#123;stats&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-6-向量检索（Similarity-Search）——-核心"><a href="#5-6-向量检索（Similarity-Search）——-核心" class="headerlink" title="5.6 向量检索（Similarity Search）—— 核心"></a>5.6 向量检索（Similarity Search）—— 核心</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成一个查询向量（模拟用户上传图片的特征）</span></span><br><span class="line">query_vector = np.random.randn(<span class="number">512</span>).tolist()</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 基础向量检索：找最相似的 top-K ==========</span></span><br><span class="line">results = client.search(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=[query_vector],          <span class="comment"># 注意是列表的列表（支持批量查询）</span></span><br><span class="line">    anns_field=<span class="string">&quot;embedding&quot;</span>,       <span class="comment"># 指定向量字段</span></span><br><span class="line">    limit=<span class="number">10</span>,                     <span class="comment"># 返回 top-10</span></span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;price&quot;</span>, <span class="string">&quot;category&quot;</span>]  <span class="comment"># 返回这些标量字段</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 基础检索结果（最相似的 10 个商品）===&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> hit <span class="keyword">in</span> results[<span class="number">0</span>]:</span><br><span class="line">    entity = hit[<span class="string">&quot;entity&quot;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;  ID=<span class="subst">&#123;entity[<span class="string">&#x27;id&#x27;</span>]&#125;</span> | 相似度=<span class="subst">&#123;hit[<span class="string">&#x27;distance&#x27;</span>]:<span class="number">.4</span>f&#125;</span> | &quot;</span></span><br><span class="line">          <span class="string">f&quot;<span class="subst">&#123;entity[<span class="string">&#x27;name&#x27;</span>]&#125;</span> | ¥<span class="subst">&#123;entity[<span class="string">&#x27;price&#x27;</span>]&#125;</span> | <span class="subst">&#123;entity[<span class="string">&#x27;category&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 混合检索：向量相似 + 标量过滤 ==========</span></span><br><span class="line"><span class="comment"># 场景：找相似商品，且价格低于 500、属于&quot;手机&quot;或&quot;电脑&quot;类</span></span><br><span class="line">filter_expr = <span class="string">&#x27;price &lt; 500 and category in [&quot;手机&quot;, &quot;电脑&quot;]&#x27;</span></span><br><span class="line"></span><br><span class="line">results_filtered = client.search(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=[query_vector],</span><br><span class="line">    anns_field=<span class="string">&quot;embedding&quot;</span>,</span><br><span class="line">    limit=<span class="number">10</span>,</span><br><span class="line">    <span class="built_in">filter</span>=filter_expr,           <span class="comment"># 标量过滤条件（Milvus 表达式语法）</span></span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;price&quot;</span>, <span class="string">&quot;category&quot;</span>, <span class="string">&quot;tags&quot;</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n=== 混合检索结果（相似 + 价格&lt;500 + 手机/电脑）===&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> hit <span class="keyword">in</span> results_filtered[<span class="number">0</span>]:</span><br><span class="line">    entity = hit[<span class="string">&quot;entity&quot;</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;  ID=<span class="subst">&#123;entity[<span class="string">&#x27;id&#x27;</span>]&#125;</span> | 相似度=<span class="subst">&#123;hit[<span class="string">&#x27;distance&#x27;</span>]:<span class="number">.4</span>f&#125;</span> | &quot;</span></span><br><span class="line">          <span class="string">f&quot;<span class="subst">&#123;entity[<span class="string">&#x27;name&#x27;</span>]&#125;</span> | ¥<span class="subst">&#123;entity[<span class="string">&#x27;price&#x27;</span>]&#125;</span> | <span class="subst">&#123;entity[<span class="string">&#x27;category&#x27;</span>]&#125;</span> | <span class="subst">&#123;entity.get(<span class="string">&#x27;tags&#x27;</span>)&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-7-标量查询（Query，非向量）"><a href="#5-7-标量查询（Query，非向量）" class="headerlink" title="5.7 标量查询（Query，非向量）"></a>5.7 标量查询（Query，非向量）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接按标量条件查询（不涉及向量相似度）</span></span><br><span class="line"><span class="comment"># 场景：查所有&quot;折扣&quot;标签且价格&lt;200 的商品</span></span><br><span class="line">query_results = client.query(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    <span class="built_in">filter</span>=<span class="string">&#x27;tags in [&quot;折扣&quot;] and price &lt; 200&#x27;</span>,</span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;price&quot;</span>, <span class="string">&quot;category&quot;</span>],</span><br><span class="line">    limit=<span class="number">5</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 标量查询结果 ===&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> query_results:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;  <span class="subst">&#123;item[<span class="string">&#x27;id&#x27;</span>]&#125;</span> | <span class="subst">&#123;item[<span class="string">&#x27;name&#x27;</span>]&#125;</span> | ¥<span class="subst">&#123;item[<span class="string">&#x27;price&#x27;</span>]&#125;</span> | <span class="subst">&#123;item[<span class="string">&#x27;category&#x27;</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-8-数据更新（Update-Upsert）"><a href="#5-8-数据更新（Update-Upsert）" class="headerlink" title="5.8 数据更新（Update &#x2F; Upsert）"></a>5.8 数据更新（Update &#x2F; Upsert）</h3><blockquote>
+<p>⚠️ <strong>Milvus 的”更新”机制</strong></p>
+<p>Milvus 没有传统 SQL 的 <code>UPDATE SET</code> 语句。<strong>更新 &#x3D; Upsert</strong>（Insert + Update 的合体）：主键已存在则覆盖，不存在则插入。</p>
+</blockquote>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Upsert：更新商品 P000001 的信息（主键相同会覆盖原数据）</span></span><br><span class="line">updated_data = [&#123;</span><br><span class="line">    <span class="string">&quot;id&quot;</span>: <span class="string">&quot;P000001&quot;</span>,</span><br><span class="line">    <span class="string">&quot;embedding&quot;</span>: np.random.randn(<span class="number">512</span>).tolist(),  <span class="comment"># 更新向量</span></span><br><span class="line">    <span class="string">&quot;name&quot;</span>: <span class="string">&quot;商品_1_已更新&quot;</span>,</span><br><span class="line">    <span class="string">&quot;price&quot;</span>: <span class="number">888.88</span>,</span><br><span class="line">    <span class="string">&quot;category&quot;</span>: <span class="string">&quot;手机&quot;</span>,</span><br><span class="line">    <span class="string">&quot;tags&quot;</span>: [<span class="string">&quot;限量&quot;</span>, <span class="string">&quot;热销&quot;</span>]</span><br><span class="line">&#125;]</span><br><span class="line"></span><br><span class="line">upsert_result = client.upsert(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=updated_data</span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;Upsert 完成，影响行数: <span class="subst">&#123;upsert_result[<span class="string">&#x27;upsert_count&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证更新结果</span></span><br><span class="line">verify = client.query(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    <span class="built_in">filter</span>=<span class="string">&#x27;id == &quot;P000001&quot;&#x27;</span>,</span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>, <span class="string">&quot;price&quot;</span>]</span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;更新后数据: <span class="subst">&#123;verify&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-9-数据删除（Delete）"><a href="#5-9-数据删除（Delete）" class="headerlink" title="5.9 数据删除（Delete）"></a>5.9 数据删除（Delete）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按主键删除单条</span></span><br><span class="line">delete_result = client.delete(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    <span class="built_in">filter</span>=<span class="string">&#x27;id == &quot;P000002&quot;&#x27;</span>  <span class="comment"># 删除主键为 P000002 的记录</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;删除 P000002 完成，删除数: <span class="subst">&#123;delete_result[<span class="string">&#x27;delete_count&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按条件批量删除（Milvus 2.x 支持）</span></span><br><span class="line">batch_delete = client.delete(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    <span class="built_in">filter</span>=<span class="string">&#x27;price &gt; 900&#x27;</span>  <span class="comment"># 删除所有价格 &gt; 900 的商品</span></span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;批量删除完成，删除数: <span class="subst">&#123;batch_delete[<span class="string">&#x27;delete_count&#x27;</span>]&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证删除后的数据量</span></span><br><span class="line">stats_after = client.get_collection_stats(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;删除后集合数据量: <span class="subst">&#123;stats_after&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-10-批量向量检索（多查询并行）"><a href="#5-10-批量向量检索（多查询并行）" class="headerlink" title="5.10 批量向量检索（多查询并行）"></a>5.10 批量向量检索（多查询并行）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 同时查询多个向量（一次性传多个查询向量）</span></span><br><span class="line">query_vectors = [np.random.randn(<span class="number">512</span>).tolist() <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>)]</span><br><span class="line"></span><br><span class="line">batch_results = client.search(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=query_vectors,        <span class="comment"># 5个查询向量</span></span><br><span class="line">    anns_field=<span class="string">&quot;embedding&quot;</span>,</span><br><span class="line">    limit=<span class="number">3</span>,</span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;=== 批量检索结果（5个查询，各返回 top-3）===&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> i, res <span class="keyword">in</span> <span class="built_in">enumerate</span>(batch_results):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;\n查询 #<span class="subst">&#123;i+<span class="number">1</span>&#125;</span> 的结果:&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> hit <span class="keyword">in</span> res:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;  <span class="subst">&#123;hit[<span class="string">&#x27;entity&#x27;</span>][<span class="string">&#x27;id&#x27;</span>]&#125;</span> (相似度=<span class="subst">&#123;hit[<span class="string">&#x27;distance&#x27;</span>]:<span class="number">.4</span>f&#125;</span>) - <span class="subst">&#123;hit[<span class="string">&#x27;entity&#x27;</span>][<span class="string">&#x27;name&#x27;</span>]&#125;</span>&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-11-范围搜索与分区"><a href="#5-11-范围搜索与分区" class="headerlink" title="5.11 范围搜索与分区"></a>5.11 范围搜索与分区</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 范围搜索（Range Search）：返回相似度在指定范围内的结果</span></span><br><span class="line">range_results = client.search(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=[query_vector],</span><br><span class="line">    anns_field=<span class="string">&quot;embedding&quot;</span>,</span><br><span class="line">    limit=<span class="number">20</span>,</span><br><span class="line">    search_params=&#123;</span><br><span class="line">        <span class="string">&quot;metric_type&quot;</span>: <span class="string">&quot;COSINE&quot;</span>,</span><br><span class="line">        <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;ef&quot;</span>: <span class="number">100</span>,          <span class="comment"># HNSW 查询候选集大小</span></span><br><span class="line">            <span class="string">&quot;radius&quot;</span>: <span class="number">0.3</span>,      <span class="comment"># 相似度下限（余弦相似度）</span></span><br><span class="line">            <span class="string">&quot;range_filter&quot;</span>: <span class="number">0.9</span> <span class="comment"># 相似度上限</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>]</span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;范围搜索返回 <span class="subst">&#123;<span class="built_in">len</span>(range_results[<span class="number">0</span>])&#125;</span> 条结果&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 分区操作 ==========</span></span><br><span class="line"><span class="comment"># 创建分区（按业务维度隔离数据）</span></span><br><span class="line">PARTITION = <span class="string">&quot;electronics&quot;</span></span><br><span class="line">client.create_partition(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    partition_name=PARTITION</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 向指定分区插入数据</span></span><br><span class="line">client.insert(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=[&#123;</span><br><span class="line">        <span class="string">&quot;id&quot;</span>: <span class="string">&quot;E001&quot;</span>,</span><br><span class="line">        <span class="string">&quot;embedding&quot;</span>: np.random.randn(<span class="number">512</span>).tolist(),</span><br><span class="line">        <span class="string">&quot;name&quot;</span>: <span class="string">&quot;电子产品_1&quot;</span>,</span><br><span class="line">        <span class="string">&quot;price&quot;</span>: <span class="number">1299.0</span>,</span><br><span class="line">        <span class="string">&quot;category&quot;</span>: <span class="string">&quot;电脑&quot;</span>,</span><br><span class="line">        <span class="string">&quot;tags&quot;</span>: [<span class="string">&quot;新品&quot;</span>]</span><br><span class="line">    &#125;],</span><br><span class="line">    partition_name=PARTITION</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 仅在指定分区中搜索</span></span><br><span class="line">results_in_partition = client.search(</span><br><span class="line">    collection_name=COLLECTION_NAME,</span><br><span class="line">    data=[query_vector],</span><br><span class="line">    anns_field=<span class="string">&quot;embedding&quot;</span>,</span><br><span class="line">    limit=<span class="number">5</span>,</span><br><span class="line">    partition_names=[PARTITION],  <span class="comment"># 限定分区</span></span><br><span class="line">    output_fields=[<span class="string">&quot;id&quot;</span>, <span class="string">&quot;name&quot;</span>]</span><br><span class="line">)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;分区搜索返回 <span class="subst">&#123;<span class="built_in">len</span>(results_in_partition[<span class="number">0</span>])&#125;</span> 条结果&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-12-资源清理"><a href="#5-12-资源清理" class="headerlink" title="5.12 资源清理"></a>5.12 资源清理</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 释放集合内存</span></span><br><span class="line">client.release_collection(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;集合已从内存释放&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除集合</span></span><br><span class="line">client.drop_collection(COLLECTION_NAME)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;集合 &#x27;<span class="subst">&#123;COLLECTION_NAME&#125;</span>&#x27; 已删除&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 关闭连接</span></span><br><span class="line">client.close()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;连接已关闭&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="六、两者互补配合使用方案"><a href="#六、两者互补配合使用方案" class="headerlink" title="六、两者互补配合使用方案"></a>六、两者互补配合使用方案</h2><p>Milvus 和 MySQL 在实际项目中是<strong>互补</strong>而非替代关系。典型架构如下：</p>
+<h3 id="6-1-典型互补架构"><a href="#6-1-典型互补架构" class="headerlink" title="6.1 典型互补架构"></a>6.1 典型互补架构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────────────────────────────────────────────┐</span><br><span class="line">│                      应用业务层                          │</span><br><span class="line">│          (商品搜索 / 推荐系统 / 图像检索)                 │</span><br><span class="line">└──────────────┬──────────────────────┬────────────────────┘</span><br><span class="line">               │                      │</span><br><span class="line">       ┌───────▼────────┐    ┌────────▼────────┐</span><br><span class="line">       │     MySQL       │    │     Milvus      │</span><br><span class="line">       │  ─────────────  │    │  ─────────────  │</span><br><span class="line">       │ • 商品完整信息   │    │ • 商品图片特征  │</span><br><span class="line">       │   (名称/价格/   │    │   (512维向量)   │</span><br><span class="line">       │    库存/详情)   │    │ • 向量相似度    │</span><br><span class="line">       │ • 用户账户/订单 │    │   检索 (ANN)    │</span><br><span class="line">       │ • 业务事务处理   │    │ • 标量过滤      │</span><br><span class="line">       │ • 关联查询 JOIN │    │ • top-K 排序    │</span><br><span class="line">       └───────┬────────┘    └────────┬────────┘</span><br><span class="line">               │                      │</span><br><span class="line">               └──────────┬───────────┘</span><br><span class="line">                          │</span><br><span class="line">                 ┌────────▼────────┐</span><br><span class="line">                 │   特征提取服务   │</span><br><span class="line">                 │  (CLIP/ResNet/  │</span><br><span class="line">                 │   BERT 等模型)  │</span><br><span class="line">                 └─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-2-协作流程（以商品搜索为例）"><a href="#6-2-协作流程（以商品搜索为例）" class="headerlink" title="6.2 协作流程（以商品搜索为例）"></a>6.2 协作流程（以商品搜索为例）</h3><table>
+<thead>
+<tr>
+<th>步骤</th>
+<th>MySQL 负责</th>
+<th>Milvus 负责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>① 数据写入</td>
+<td>存储商品完整业务字段（名称、价格、库存、SKU、详情）</td>
+<td>存储商品图片&#x2F;文本的特征向量 + 商品 ID</td>
+</tr>
+<tr>
+<td>② 在线检索</td>
+<td>—</td>
+<td>接收查询向量，返回 top-K 相似商品的 ID 列表</td>
+</tr>
+<tr>
+<td>③ 详情补全</td>
+<td>根据返回的 ID 批量查询完整商品信息</td>
+<td>—</td>
+</tr>
+<tr>
+<td>④ 事务操作</td>
+<td>下单、扣库存、支付等强一致性事务</td>
+<td>—</td>
+</tr>
+<tr>
+<td>⑤ 数据同步</td>
+<td>商品上架&#x2F;下架时触发</td>
+<td>同步更新对应的向量数据（新增&#x2F;删除&#x2F;upsert）</td>
+</tr>
+</tbody></table>
+<h3 id="6-3-具体代码示例（双库协作）"><a href="#6-3-具体代码示例（双库协作）" class="headerlink" title="6.3 具体代码示例（双库协作）"></a>6.3 具体代码示例（双库协作）</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pymysql</span><br><span class="line"><span class="keyword">from</span> pymilvus <span class="keyword">import</span> MilvusClient</span><br><span class="line"><span class="keyword">from</span> feature_extractor <span class="keyword">import</span> extract_image_embedding  <span class="comment"># 假设的特征提取服务</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 初始化两个数据库连接 ==========</span></span><br><span class="line">mysql_conn = pymysql.connect(host=<span class="string">&quot;localhost&quot;</span>, user=<span class="string">&quot;root&quot;</span>,</span><br><span class="line">                             password=<span class="string">&quot;***&quot;</span>, database=<span class="string">&quot;shop&quot;</span>, charset=<span class="string">&quot;utf8mb4&quot;</span>)</span><br><span class="line">milvus_client = MilvusClient(uri=<span class="string">&quot;http://localhost:19530&quot;</span>)</span><br><span class="line"></span><br><span class="line">COLLECTION = <span class="string">&quot;product_vectors&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 场景1：商品上架 —— 双写同步 ==========</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_product_upload</span>(<span class="params">product_id, image_url, name, price, category</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;商品上架时，同时写入 MySQL 和 Milvus&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 1. MySQL 写入业务数据</span></span><br><span class="line">    <span class="keyword">with</span> mysql_conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">        sql = <span class="string">&quot;&quot;&quot;INSERT INTO products (id, name, price, category, image_url, status)</span></span><br><span class="line"><span class="string">                 VALUES (%s, %s, %s, %s, %s, &#x27;online&#x27;)&quot;&quot;&quot;</span></span><br><span class="line">        cursor.execute(sql, (product_id, name, price, category, image_url))</span><br><span class="line">    mysql_conn.commit()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2. 提取图片特征向量</span></span><br><span class="line">    embedding = extract_image_embedding(image_url)  <span class="comment"># 返回 512维向量</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. Milvus 写入向量数据（仅存 ID + 向量 + 必要过滤字段）</span></span><br><span class="line">    milvus_client.insert(</span><br><span class="line">        collection_name=COLLECTION,</span><br><span class="line">        data=[&#123;</span><br><span class="line">            <span class="string">&quot;id&quot;</span>: product_id,</span><br><span class="line">            <span class="string">&quot;embedding&quot;</span>: embedding,</span><br><span class="line">            <span class="string">&quot;category&quot;</span>: category,</span><br><span class="line">            <span class="string">&quot;price&quot;</span>: price</span><br><span class="line">        &#125;]</span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;商品 <span class="subst">&#123;product_id&#125;</span> 上架完成（MySQL + Milvus 同步）&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 场景2：以图搜商品 —— Milvus 检索 + MySQL 补全 ==========</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">search_by_image</span>(<span class="params">query_image_url, top_k=<span class="number">10</span>, max_price=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;用户上传图片，搜索相似商品&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 1. 提取查询图片的特征向量</span></span><br><span class="line">    query_vector = extract_image_embedding(query_image_url)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2. Milvus 向量相似度检索，返回 top-K 商品 ID</span></span><br><span class="line">    filter_expr = <span class="string">f&quot;price &lt; <span class="subst">&#123;max_price&#125;</span>&quot;</span> <span class="keyword">if</span> max_price <span class="keyword">else</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    search_results = milvus_client.search(</span><br><span class="line">        collection_name=COLLECTION,</span><br><span class="line">        data=[query_vector],</span><br><span class="line">        anns_field=<span class="string">&quot;embedding&quot;</span>,</span><br><span class="line">        limit=top_k,</span><br><span class="line">        <span class="built_in">filter</span>=filter_expr,</span><br><span class="line">        output_fields=[<span class="string">&quot;id&quot;</span>]  <span class="comment"># 只取 ID，详情从 MySQL 查</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 3. 收集相似商品 ID</span></span><br><span class="line">    product_ids = [hit[<span class="string">&quot;entity&quot;</span>][<span class="string">&quot;id&quot;</span>] <span class="keyword">for</span> hit <span class="keyword">in</span> search_results[<span class="number">0</span>]]</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> product_ids:</span><br><span class="line">        <span class="keyword">return</span> []</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 4. MySQL 批量查询完整商品信息</span></span><br><span class="line">    <span class="keyword">with</span> mysql_conn.cursor(pymysql.cursors.DictCursor) <span class="keyword">as</span> cursor:</span><br><span class="line">        placeholders = <span class="string">&quot;,&quot;</span>.join([<span class="string">&quot;%s&quot;</span>] * <span class="built_in">len</span>(product_ids))</span><br><span class="line">        sql = <span class="string">f&quot;&quot;&quot;SELECT id, name, price, category, image_url, stock</span></span><br><span class="line"><span class="string">                  FROM products WHERE id IN (<span class="subst">&#123;placeholders&#125;</span>)&quot;&quot;&quot;</span></span><br><span class="line">        cursor.execute(sql, product_ids)</span><br><span class="line">        products = &#123;row[<span class="string">&quot;id&quot;</span>]: row <span class="keyword">for</span> row <span class="keyword">in</span> cursor.fetchall()&#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 5. 按 Milvus 的相似度排序组装结果</span></span><br><span class="line">    results = []</span><br><span class="line">    <span class="keyword">for</span> hit <span class="keyword">in</span> search_results[<span class="number">0</span>]:</span><br><span class="line">        pid = hit[<span class="string">&quot;entity&quot;</span>][<span class="string">&quot;id&quot;</span>]</span><br><span class="line">        <span class="keyword">if</span> pid <span class="keyword">in</span> products:</span><br><span class="line">            results.append(&#123;</span><br><span class="line">                **products[pid],</span><br><span class="line">                <span class="string">&quot;similarity&quot;</span>: hit[<span class="string">&quot;distance&quot;</span>]  <span class="comment"># 相似度得分</span></span><br><span class="line">            &#125;)</span><br><span class="line">    <span class="keyword">return</span> results</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ========== 场景3：商品下架 —— 双删同步 ==========</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">on_product_offline</span>(<span class="params">product_id</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;商品下架时，双库同步删除&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 1. MySQL 软删除（更新状态，保留历史记录）</span></span><br><span class="line">    <span class="keyword">with</span> mysql_conn.cursor() <span class="keyword">as</span> cursor:</span><br><span class="line">        cursor.execute(</span><br><span class="line">            <span class="string">&quot;UPDATE products SET status=&#x27;offline&#x27; WHERE id=%s&quot;</span>,</span><br><span class="line">            (product_id,)</span><br><span class="line">        )</span><br><span class="line">    mysql_conn.commit()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 2. Milvus 硬删除（向量不再参与检索）</span></span><br><span class="line">    milvus_client.delete(</span><br><span class="line">        collection_name=COLLECTION,</span><br><span class="line">        <span class="built_in">filter</span>=<span class="string">f&#x27;id == &quot;<span class="subst">&#123;product_id&#125;</span>&quot;&#x27;</span></span><br><span class="line">    )</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;商品 <span class="subst">&#123;product_id&#125;</span> 已下架（MySQL 软删 + Milvus 硬删）&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-职责分工总结"><a href="#6-4-职责分工总结" class="headerlink" title="6.4 职责分工总结"></a>6.4 职责分工总结</h3><table>
+<thead>
+<tr>
+<th>职责</th>
+<th>由谁承担</th>
+<th>原因</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>用户&#x2F;订单&#x2F;支付事务</td>
+<td><strong>MySQL</strong></td>
+<td>需要 ACID 事务、强一致性</td>
+</tr>
+<tr>
+<td>商品完整业务信息</td>
+<td><strong>MySQL</strong></td>
+<td>结构化字段、关联查询、统计</td>
+</tr>
+<tr>
+<td>向量相似度检索</td>
+<td><strong>Milvus</strong></td>
+<td>MySQL 无法高效做 ANN</td>
+</tr>
+<tr>
+<td>语义&#x2F;图像&#x2F;文本检索</td>
+<td><strong>Milvus</strong></td>
+<td>理解”相似”而非精确匹配</td>
+</tr>
+<tr>
+<td>推荐系统召回</td>
+<td><strong>Milvus</strong></td>
+<td>毫秒级从百万向量中找 top-K</td>
+</tr>
+<tr>
+<td>数据一致性保障</td>
+<td><strong>两者协同</strong></td>
+<td>MySQL 为主，Milvus 异步同步</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="七、选型决策建议"><a href="#七、选型决策建议" class="headerlink" title="七、选型决策建议"></a>七、选型决策建议</h2><table>
+<thead>
+<tr>
+<th>你的场景</th>
+<th>选择</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>需要事务、强一致性、结构化精确查询</td>
+<td><strong>MySQL</strong></td>
+</tr>
+<tr>
+<td>需要”语义相似”检索（图像&#x2F;文本&#x2F;音频&#x2F;推荐）</td>
+<td><strong>Milvus</strong></td>
+</tr>
+<tr>
+<td>数据量超千万，需要水平扩展检索能力</td>
+<td><strong>Milvus</strong></td>
+</tr>
+<tr>
+<td>RAG 知识库 &#x2F; 语义问答系统</td>
+<td><strong>Milvus</strong> + LLM</td>
+</tr>
+<tr>
+<td>商品搜索（以图搜物 + 详情展示）</td>
+<td><strong>两者互补</strong></td>
+</tr>
+<tr>
+<td>内容去重（感知哈希）</td>
+<td><strong>Milvus</strong>（二值向量）</td>
+</tr>
+<tr>
+<td>传统报表统计、复杂 JOIN</td>
+<td><strong>MySQL</strong></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>✅ <strong>核心结论</strong></p>
+<p>大多数现代 AI 应用都需要<strong>双库并存</strong>：MySQL 管理结构化业务数据与事务，Milvus 负责向量化相似度检索。两者通过主键（如商品 ID）关联，各司其职、协同工作。理解各自的能力边界，是构建高性能 AI 应用的关键。</p>
+</blockquote>
+<hr>
+<p><em>注：本文档基于 Milvus 2.x（pymilvus 2.3+）与 MySQL 8.0 编写。不同版本 API 可能有差异，请以官方文档为准。</em></p>
+
+      </div>
+    </div>
+    
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <a class="post-nav-item-left" href="/2026/07/04/%E9%98%B2%E5%BE%A1%E6%80%A7%E5%AE%89%E5%85%A8%E9%A9%BE%E9%A9%B6%E7%AE%97%E6%B3%95%E5%88%9D%E6%8E%A2/">
+      <div class="text-align">
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+        <span class="text-small">上一篇</span>
+      </div>
+      <div>模拟防御性安全驾驶算法初探</div>
+    </a>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2026/03/15/%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%E5%B8%B8%E7%94%A8%E5%B7%A5%E5%85%B7%E5%8F%8A%E5%AE%9E%E8%B7%B5/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      迁移学习常用工具及实践
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+  <div class="foot-inner">
+    <div class="foot__head">
+      
+        <div class="foot-line">
+          <div class="matts">S</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">h</div><div class="matts">u</div><div class="matts">n</div><div class="matts">g</div><div class="matts">r</div><div class="matts">y</div>
+        </div>
+      
+        <div class="foot-line">
+          <div class="matts">s</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">f</div><div class="matts">o</div><div class="matts">o</div><div class="matts">l</div><div class="matts">i</div><div class="matts">s</div><div class="matts">h</div>
+        </div>
+      
+    </div>
+    <div class="foot__body">
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Links</div>
+          <div class="foot-item__body">
+            
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://apt-x.cn">apt-x</a>
+          </div>
+        
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link+.svg" />
+            <a class="foot-link" href="mailto:0xd0e0@gmail.com?subject=申请http://example.com的友链">申请友链</a>
+          </div>
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Account</div>
+          <div class="foot-item__body">
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/logo-github.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/CVEProject">CVEProject</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      <div class="foot-item">
+        <div class="foot-item__head">Contact</div>
+        <div class="foot-item__body">
+          
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-email.svg" />
+            <a class="foot-link" href="0xd0e0@gmail.com">0xd0e0@gmail.com</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+        </div>
+      </div>
+    </div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?9c1c7e2fd009de02992beaacd49b3b30";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    
+      <script src="https://unpkg.com/js-polyfills@0.1.43/es6.js"></script>
+      <script id="MathJax-script"
+              async
+              src="https://www.unpkg.com/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    
+    
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+  
+
+  </body>
+</html>
