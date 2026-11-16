@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="utf8"/>
+    
+    <meta name="viewport" content="initial-scale=1.0, width=device-width"/>
+    <title>
+      
+        LangGraph 核心架构、基本组件与项目实战 | apt-x
+      
+    </title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    
+      <link rel="apple-touch-icon"
+            sizes="180x180"
+            href="/images/apple-touch-icon.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="32x32"
+            href="/images/favicon-32x32.png"/>
+    
+    
+      <link rel="icon"
+            type="image/png"
+            sizes="16x16"
+            href="/images/favicon-16x16.png"/>
+    
+    
+      <link rel="mask-icon"
+            href="/images/logo.svg"
+            color=""/>
+    
+    
+    
+      
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/normal.ttf);
+        font-weight: normal;
+    }
+  </style>
+
+  <style>
+    @font-face {
+        font-family:sourceHanSerif;
+        src: url(/font/bold.ttf);
+        font-weight: bold;
+    }
+  </style>
+
+
+    
+    <link rel="stylesheet"
+          type="text/css"
+          href='/css/layout.css'/>
+    
+    
+  <link rel="stylesheet" type="text/css" href="/css/post.css"/>
+  
+
+  <meta name="generator" content="Hexo 8.1.1"></head>
+  <body>
+    
+      <div id="search-mask" style="display:none">
+  <div class="search-main" id="search-main">
+    <div class="search__head">
+      <div class="search-form">
+        <svg t="1706347533072"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="7828"
+             width="20"
+             height="20">
+          <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829">
+          </path>
+        </svg>
+        <input id="search-input" placeholder="搜索文章">
+        <svg t="1706361500528"
+             id="search-clear"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             version="1.1"
+             xmlns="http://www.w3.org/2000/svg"
+             p-id="4351"
+             width="20"
+             height="20">
+          <path d="M512 562.688l-264.2944 264.2944-50.688-50.688L461.312 512 197.0176 247.7056l50.688-50.688L512 461.312l264.2944-264.2944 50.688 50.688L562.688 512l264.2944 264.2944-50.688 50.688L512 562.688z" fill="#00" p-id="4352">
+          </path>
+        </svg>
+      </div>
+    </div>
+    <div class="search__body" id="search-result"></div>
+    <div class="search__foot"></div>
+  </div>
+</div>
+
+    
+    
+    <div class=head>
+      <div class="nav">
+        <a href='/' class="nav-logo">
+          <img alt="logo" height="60px" width="60px" src="/images/logo.svg"/>
+        </a>
+        <input id="navBtn" type="checkbox"/>
+        <div class="nav-right">
+          
+            <div class="search-outer"><div class="search" id="search-btn">
+  <svg t="1706347533072"
+       class="icon"
+       viewBox="0 0 1024 1024"
+       version="1.1"
+       xmlns="http://www.w3.org/2000/svg"
+       p-id="7828"
+       width="20"
+       height="20">
+    <path d="M685.6 660.336l155.152 155.168a16 16 0 0 1 0 22.624l-11.312 11.328a16 16 0 0 1-22.624 0l-158.528-158.544a289.792 289.792 0 0 1-165.152 51.36C322.336 742.256 192 611.904 192 451.12 192 290.336 322.336 160 483.136 160c160.784 0 291.12 130.336 291.12 291.136 0 82.112-33.984 156.272-88.672 209.2z m-202.464 33.92c134.272 0 243.12-108.848 243.12-243.12C726.256 316.848 617.408 208 483.136 208 348.848 208 240 316.848 240 451.136c0 134.272 108.848 243.12 243.136 243.12z" fill="#000000" p-id="7829"></path>
+  </svg>
+  <span>搜索</span>
+  <span class="search-shortcut-key">Ctrl K</span>
+</div></div>
+          
+          <div class="nav-menu">
+            
+              
+                <a class="nav-menu-item" href="/dev">Dev</a>
+              
+                <a class="nav-menu-item" href="/sec">Sec</a>
+              
+            
+            
+          </div>
+        </div>
+        <label class="nav-btn" for="navBtn"></label>
+      </div>
+    </div>
+    <div class="body">
+      
+  <article class="post-content">
+    <div class="post-inner">
+      <div class="post-content__head">
+        <div class="post-title">LangGraph 核心架构、基本组件与项目实战</div>
+        <div class="post-info">
+          
+  
+
+
+          <span class="post-date">2026-08-16</span>
+        </div>
+      </div>
+      
+      <div class="post-content__body">
+        
+          <div class="post-gallery">
+            
+          </div>
+        
+        <h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a>目录</h2><ol>
+<li><a href="#%E4%B8%80langgraph-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84">LangGraph 核心架构</a></li>
+<li><a href="#%E4%BA%8Clanggraph-%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6%E8%AF%A6%E8%A7%A3">LangGraph 基本组件</a></li>
+<li><a href="#%E4%B8%89%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98%E4%BC%81%E4%B8%9A%E6%99%BA%E8%83%BD%E5%AE%A2%E6%9C%8D-agent">项目实战：企业智能客服 Agent</a></li>
+<li><a href="#%E5%9B%9B%E9%A1%B9%E7%9B%AE%E8%BF%9B%E9%98%B6%E5%A6%82%E4%BD%95%E5%90%91%E7%94%9F%E4%BA%A7%E7%BA%A7%E7%B3%BB%E7%BB%9F%E6%BC%94%E8%BF%9B">向生产级系统演进</a></li>
+<li><a href="#%E4%BA%94langgraph-%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF">学习路线</a></li>
+<li><a href="#%E5%85%AD%E6%9C%80%E9%87%8D%E8%A6%81%E7%9A%84%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93">知识点总结</a></li>
+<li><a href="#%E4%B8%83%E5%AE%98%E6%96%B9%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%BA%90">官方学习资源</a></li>
+</ol>
+<hr>
+<h1 id="一、LangGraph-核心架构"><a href="#一、LangGraph-核心架构" class="headerlink" title="一、LangGraph 核心架构"></a>一、LangGraph 核心架构</h1><p>LangGraph 是 LangChain 生态中用于构建<strong>有状态、可循环、可控制、支持持久化的 AI Agent（智能体）应用</strong>的核心框架。</p>
+<p>如果说 LangChain 主要解决如何调用大模型、组织 Prompt、连接工具，那么 LangGraph 进一步解决：</p>
+<ul>
+<li>如何让 AI 按照业务流程执行任务？</li>
+<li>如何让 AI 根据执行结果自主决定下一步？</li>
+<li>如何实现多轮对话和上下文状态管理？</li>
+<li>如何让 Agent 在执行过程中调用外部工具？</li>
+<li>如何实现人工审核、暂停、恢复和长期记忆？</li>
+<li>如何构建多个 Agent 协同工作的系统？</li>
+</ul>
+<p><strong>一句话理解：LangGraph 通过图结构，把大模型、工具、业务逻辑和状态管理组织成一个可运行的智能体工作流。</strong></p>
+<h2 id="1-1-整体架构"><a href="#1-1-整体架构" class="headerlink" title="1.1 整体架构"></a>1.1 整体架构</h2><p>LangGraph 的核心设计思想是 Graph（图）。它将 AI 应用拆分成多个节点（Node），节点之间通过边（Edge）连接，利用 State（状态）传递上下文信息。</p>
+<img src="/2026/08/16/LangGraph-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%E3%80%81%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/langgraph_architecture.png" class="" title="图片描述">
+
+<p>整体可概括为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">用户输入</span><br><span class="line">   ↓</span><br><span class="line">Graph Runtime</span><br><span class="line">   ├── State：共享状态</span><br><span class="line">   ├── Nodes：执行节点</span><br><span class="line">   ├── Edges：执行路由</span><br><span class="line">   └── Reducers：状态合并</span><br><span class="line">   ↓</span><br><span class="line">Tools / LLM / External Services</span><br><span class="line">   ↓</span><br><span class="line">最终结果</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-核心运行机制"><a href="#1-2-核心运行机制" class="headerlink" title="1.2 核心运行机制"></a>1.2 核心运行机制</h2><p>LangGraph 可以看作一个状态驱动的图执行引擎：</p>
+<ol>
+<li>接收用户输入。</li>
+<li>初始化 Graph State。</li>
+<li>根据入口边找到第一个 Node。</li>
+<li>Node 执行对应业务逻辑。</li>
+<li>Node 返回状态更新。</li>
+<li>Graph 根据 Edge 决定下一个执行节点。</li>
+<li>重复执行，直到到达 END。</li>
+</ol>
+<p>例如智能客服：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">用户提问</span><br><span class="line">   ↓</span><br><span class="line">问题分类 Node</span><br><span class="line">   ↓</span><br><span class="line">条件路由 Router</span><br><span class="line">   ├── 订单问题 → 订单查询 Node ──┐</span><br><span class="line">   └── 售后问题 → 售后处理 Node ──┤</span><br><span class="line">                                  ↓</span><br><span class="line">                               生成答案</span><br><span class="line">                                  ↓</span><br><span class="line">                                 END</span><br></pre></td></tr></table></figure>
+
+<p>LangGraph 的特点是支持循环、分支、并行、暂停、恢复和动态路由。</p>
+<h2 id="1-3-底层执行模型"><a href="#1-3-底层执行模型" class="headerlink" title="1.3 底层执行模型"></a>1.3 底层执行模型</h2><p>LangGraph 的 Graph API 采用类似 Google Pregel 的消息传递和 Super-step（超级步）执行模型。</p>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Message Passing</td>
+<td>节点通过状态更新向其他节点传递数据</td>
+</tr>
+<tr>
+<td>Super-step</td>
+<td>一轮节点调度和执行</td>
+</tr>
+<tr>
+<td>Halt</td>
+<td>所有节点完成且没有待处理消息时结束</td>
+</tr>
+</tbody></table>
+<p>例如：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">第1轮：用户输入</span><br><span class="line">第2轮：问题分类</span><br><span class="line">第3轮：订单查询 + 用户信息查询（可以并行）</span><br><span class="line">第4轮：结果整合</span><br><span class="line">第5轮：生成最终回复</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="二、LangGraph-基本组件详解"><a href="#二、LangGraph-基本组件详解" class="headerlink" title="二、LangGraph 基本组件详解"></a>二、LangGraph 基本组件详解</h1><h2 id="2-1-State：状态管理"><a href="#2-1-State：状态管理" class="headerlink" title="2.1 State：状态管理"></a>2.1 State：状态管理</h2><p>State 是整个 Graph 的共享状态容器，保存 Agent 执行过程中需要使用的数据，例如用户输入、历史对话、当前执行步骤、工具调用结果、用户身份和业务处理结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> TypedDict</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    question: <span class="built_in">str</span></span><br><span class="line">    category: <span class="built_in">str</span></span><br><span class="line">    answer: <span class="built_in">str</span></span><br><span class="line">    order_id: <span class="built_in">str</span></span><br></pre></td></tr></table></figure>
+
+<p>假设用户输入：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;question&quot;</span>: <span class="string">&quot;我的订单什么时候发货？&quot;</span>,</span><br><span class="line">    <span class="string">&quot;category&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;answer&quot;</span>: <span class="string">&quot;&quot;</span>,</span><br><span class="line">    <span class="string">&quot;order_id&quot;</span>: <span class="string">&quot;10001&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>节点执行后可以只返回部分状态：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">classify_node</span>(<span class="params">state: AgentState</span>):</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;category&quot;</span>: <span class="string">&quot;订单查询&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p>LangGraph 会根据字段对应的更新规则合并节点返回值。节点不必每次返回完整 State。</p>
+<h3 id="Reducer：状态合并器"><a href="#Reducer：状态合并器" class="headerlink" title="Reducer：状态合并器"></a>Reducer：状态合并器</h3><p>Reducer 决定多个节点更新同一个 State 字段时如何合并。默认情况下，字段更新通常采用覆盖策略。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> typing <span class="keyword">import</span> Annotated</span><br><span class="line"><span class="keyword">from</span> typing_extensions <span class="keyword">import</span> TypedDict</span><br><span class="line"><span class="keyword">import</span> operator</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">AgentState</span>(<span class="title class_ inherited__">TypedDict</span>):</span><br><span class="line">    messages: Annotated[<span class="built_in">list</span>, operator.add]</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>operator.add</code> 表示列表追加合并。在实际 Agent 中，消息列表通常使用 LangGraph 提供的 <code>add_messages</code> Reducer，以正确处理消息 ID 和更新。</p>
+<h2 id="2-2-Node：节点"><a href="#2-2-Node：节点" class="headerlink" title="2.2 Node：节点"></a>2.2 Node：节点</h2><p>Node 是 Graph 的基本执行单元。本质上通常是一个 Python 函数，可以调用大模型、查询数据库、调用第三方 API、执行 Python 业务逻辑或处理工具返回结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">query_order</span>(<span class="params">state</span>):</span><br><span class="line">    order_id = state[<span class="string">&quot;order_id&quot;</span>]</span><br><span class="line"></span><br><span class="line">    result = &#123;</span><br><span class="line">        <span class="string">&quot;order_id&quot;</span>: order_id,</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;运输中&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;order_result&quot;</span>: result&#125;</span><br></pre></td></tr></table></figure>
+
+<p>基本规则：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">接收 State → 执行业务逻辑 → 返回 State 更新</span><br></pre></td></tr></table></figure>
+
+<p>建议一个 Node 尽量只负责一类明确任务，便于测试、复用和故障排查。</p>
+<h2 id="2-3-Edge：边"><a href="#2-3-Edge：边" class="headerlink" title="2.3 Edge：边"></a>2.3 Edge：边</h2><p>Edge 用来定义节点之间的执行关系。</p>
+<h3 id="普通边：add-edge"><a href="#普通边：add-edge" class="headerlink" title="普通边：add_edge"></a>普通边：<code>add_edge</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">builder.add_edge(<span class="string">&quot;classify&quot;</span>, <span class="string">&quot;query&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>表示分类完成后执行查询。</p>
+<h3 id="条件边：add-conditional-edges"><a href="#条件边：add-conditional-edges" class="headerlink" title="条件边：add_conditional_edges"></a>条件边：<code>add_conditional_edges</code></h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">route</span>(<span class="params">state</span>):</span><br><span class="line">    <span class="keyword">if</span> state[<span class="string">&quot;category&quot;</span>] == <span class="string">&quot;订单&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;order&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> state[<span class="string">&quot;category&quot;</span>] == <span class="string">&quot;售后&quot;</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;after_sales&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;general&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">builder.add_conditional_edges(</span><br><span class="line">    <span class="string">&quot;classify&quot;</span>,</span><br><span class="line">    route,</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="string">&quot;order&quot;</span>: <span class="string">&quot;order_node&quot;</span>,</span><br><span class="line">        <span class="string">&quot;after_sales&quot;</span>: <span class="string">&quot;after_sales_node&quot;</span>,</span><br><span class="line">        <span class="string">&quot;general&quot;</span>: <span class="string">&quot;general_node&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<h3 id="入口和出口"><a href="#入口和出口" class="headerlink" title="入口和出口"></a>入口和出口</h3><ul>
+<li><code>START</code>：图执行入口。</li>
+<li><code>END</code>：图执行终点。</li>
+</ul>
+<h2 id="2-4-StateGraph：图构建器"><a href="#2-4-StateGraph：图构建器" class="headerlink" title="2.4 StateGraph：图构建器"></a>2.4 StateGraph：图构建器</h2><p>StateGraph 是构建 LangGraph 应用的主要类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, START, END</span><br><span class="line"></span><br><span class="line">builder = StateGraph(AgentState)</span><br><span class="line"></span><br><span class="line">builder.add_node(<span class="string">&quot;classify&quot;</span>, classify_node)</span><br><span class="line">builder.add_node(<span class="string">&quot;query&quot;</span>, query_node)</span><br><span class="line"></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;classify&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;classify&quot;</span>, <span class="string">&quot;query&quot;</span>)</span><br><span class="line">builder.add_edge(<span class="string">&quot;query&quot;</span>, END)</span><br><span class="line"></span><br><span class="line">graph = builder.<span class="built_in">compile</span>()</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>API</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>StateGraph()</code></td>
+<td>定义图及状态结构</td>
+</tr>
+<tr>
+<td><code>add_node()</code></td>
+<td>添加节点</td>
+</tr>
+<tr>
+<td><code>add_edge()</code></td>
+<td>添加普通边</td>
+</tr>
+<tr>
+<td><code>add_conditional_edges()</code></td>
+<td>添加条件边</td>
+</tr>
+<tr>
+<td><code>compile()</code></td>
+<td>编译图，生成可执行应用</td>
+</tr>
+</tbody></table>
+<h2 id="2-5-Tool：工具调用"><a href="#2-5-Tool：工具调用" class="headerlink" title="2.5 Tool：工具调用"></a>2.5 Tool：工具调用</h2><p>Tool 是 Agent 连接外部系统的能力接口，例如查询订单、查询商品库存、搜索互联网、查询天气、发送邮件和查询企业内部数据库。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.tools <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_order</span>(<span class="params">order_id: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;根据订单编号查询订单状态。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;订单 <span class="subst">&#123;order_id&#125;</span> 当前状态：运输中&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>大模型可以根据用户问题决定是否调用工具。</p>
+<p><strong>区别：</strong> Tool 是可供模型调用的能力；Node 是图执行单元。Tool 可以被 ToolNode 执行，也可以在普通 Node 中调用。</p>
+<h2 id="2-6-ToolNode-和-tools-condition"><a href="#2-6-ToolNode-和-tools-condition" class="headerlink" title="2.6 ToolNode 和 tools_condition"></a>2.6 ToolNode 和 tools_condition</h2><ul>
+<li><code>ToolNode</code>：负责执行模型发出的工具调用。</li>
+<li><code>tools_condition</code>：根据模型输出判断是否存在工具调用，并决定继续执行工具节点还是结束。</li>
+</ul>
+<img src="/2026/08/16/LangGraph-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%E3%80%81%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/tool_calling_cycle.png" class="" title="图片描述">
+
+<p>典型循环：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LLM → 工具 → LLM → 工具 → LLM → END</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-7-Checkpointer：持久化与记忆"><a href="#2-7-Checkpointer：持久化与记忆" class="headerlink" title="2.7 Checkpointer：持久化与记忆"></a>2.7 Checkpointer：持久化与记忆</h2><p>Checkpointer 保存 Graph 执行过程中的状态快照。</p>
+<p>例如用户先问“我想查询订单 10001”，之后问“预计什么时候到？”。如果会话状态得到保存，Agent 就可以在同一会话中理解第二个问题指向前面的订单。</p>
+<p>使用 Checkpointer 时，通常通过 <code>thread_id</code> 区分会话。</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>InMemorySaver</td>
+<td>开发测试，进程内保存</td>
+</tr>
+<tr>
+<td>SQLite Checkpointer</td>
+<td>本地开发、小型应用</td>
+</tr>
+<tr>
+<td>PostgresSaver</td>
+<td>生产环境持久化</td>
+</tr>
+</tbody></table>
+<p>注意：内存 Checkpointer 在服务进程重启后会丢失状态，不适合生产环境。</p>
+<h2 id="2-8-Interrupt：人工介入"><a href="#2-8-Interrupt：人工介入" class="headerlink" title="2.8 Interrupt：人工介入"></a>2.8 Interrupt：人工介入</h2><p>Interrupt 允许 Agent 暂停执行，等待人工确认后再恢复。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">用户要求退款</span><br><span class="line">   ↓</span><br><span class="line">Agent 查询订单</span><br><span class="line">   ↓</span><br><span class="line">生成退款申请</span><br><span class="line">   ↓</span><br><span class="line">暂停执行</span><br><span class="line">   ↓</span><br><span class="line">人工审核</span><br><span class="line">   ↓</span><br><span class="line">批准或拒绝</span><br><span class="line">   ↓</span><br><span class="line">继续执行</span><br></pre></td></tr></table></figure>
+
+<p>这对于资金操作、删除数据、修改业务记录等高风险操作尤其重要。</p>
+<h2 id="2-9-Send-和-Command"><a href="#2-9-Send-和-Command" class="headerlink" title="2.9 Send 和 Command"></a>2.9 Send 和 Command</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>主要用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Send</td>
+<td>动态分发任务，支持 Map-Reduce 和并行执行</td>
+</tr>
+<tr>
+<td>Command</td>
+<td>在节点内同时更新状态和指定下一步路由</td>
+</tr>
+<tr>
+<td>Subgraph</td>
+<td>将子工作流封装为可复用子图</td>
+</tr>
+<tr>
+<td>Runtime Context</td>
+<td>向节点传递运行时配置和依赖</td>
+</tr>
+</tbody></table>
+<p>例如，一篇文章需要分别生成摘要、关键词和分类，可以通过 Send 将任务分发给多个 Worker 并行执行，再整合结果。</p>
+<h2 id="2-10-核心组件速查表"><a href="#2-10-核心组件速查表" class="headerlink" title="2.10 核心组件速查表"></a>2.10 核心组件速查表</h2><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>作用</th>
+<th>重要程度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>State</td>
+<td>保存工作流状态</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>Reducer</td>
+<td>合并状态更新</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>Node</td>
+<td>执行具体任务</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>Edge</td>
+<td>控制执行路径</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>StateGraph</td>
+<td>构建图</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>START &#x2F; END</td>
+<td>入口和出口</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>Tool</td>
+<td>外部能力</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>ToolNode</td>
+<td>执行工具</td>
+<td>常用</td>
+</tr>
+<tr>
+<td>tools_condition</td>
+<td>工具路由</td>
+<td>常用</td>
+</tr>
+<tr>
+<td>Checkpointer</td>
+<td>状态持久化</td>
+<td>核心</td>
+</tr>
+<tr>
+<td>Interrupt</td>
+<td>人工审核</td>
+<td>进阶</td>
+</tr>
+<tr>
+<td>Send</td>
+<td>动态并行</td>
+<td>进阶</td>
+</tr>
+<tr>
+<td>Command</td>
+<td>动态路由与状态更新</td>
+<td>进阶</td>
+</tr>
+<tr>
+<td>Subgraph</td>
+<td>子图复用</td>
+<td>进阶</td>
+</tr>
+</tbody></table>
+<hr>
+<h1 id="三、项目实战：企业智能客服-Agent"><a href="#三、项目实战：企业智能客服-Agent" class="headerlink" title="三、项目实战：企业智能客服 Agent"></a>三、项目实战：企业智能客服 Agent</h1><p>本项目构建一个具备实际业务处理能力的智能客服，而不只是简单聊天机器人。</p>
+<h2 id="3-1-项目目标"><a href="#3-1-项目目标" class="headerlink" title="3.1 项目目标"></a>3.1 项目目标</h2><p>实现以下功能：</p>
+<ol>
+<li>用户自然语言提问。</li>
+<li>AI 自动识别问题类型。</li>
+<li>订单问题自动查询订单。</li>
+<li>商品问题自动查询库存。</li>
+<li>售后问题转入售后处理流程。</li>
+<li>普通问题直接由大模型回答。</li>
+<li>保存对话上下文，支持多轮交互。</li>
+</ol>
+<h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Python 3.11+</td>
+<td>后端开发语言</td>
+</tr>
+<tr>
+<td>LangGraph</td>
+<td>Agent 工作流引擎</td>
+</tr>
+<tr>
+<td>LangChain</td>
+<td>模型和工具集成</td>
+</tr>
+<tr>
+<td>OpenAI 兼容模型 API</td>
+<td>大语言模型</td>
+</tr>
+<tr>
+<td>FastAPI</td>
+<td>Web API 服务</td>
+</tr>
+<tr>
+<td>SQLite &#x2F; PostgreSQL</td>
+<td>数据持久化</td>
+</tr>
+<tr>
+<td>Uvicorn</td>
+<td>Web 服务运行</td>
+</tr>
+</tbody></table>
+<img src="/2026/08/16/LangGraph-%E6%A0%B8%E5%BF%83%E6%9E%B6%E6%9E%84%E3%80%81%E5%9F%BA%E6%9C%AC%E7%BB%84%E4%BB%B6%E4%B8%8E%E9%A1%B9%E7%9B%AE%E5%AE%9E%E6%88%98/customer_service_workflow.png" class="" title="图片描述">
+
+<h2 id="3-2-项目目录结构"><a href="#3-2-项目目录结构" class="headerlink" title="3.2 项目目录结构"></a>3.2 项目目录结构</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">langgraph-customer-service/</span><br><span class="line">│</span><br><span class="line">├── app/</span><br><span class="line">│   ├── __init__.py</span><br><span class="line">│   ├── main.py              # FastAPI入口</span><br><span class="line">│   ├── agent.py             # LangGraph工作流</span><br><span class="line">│   ├── state.py             # 状态定义</span><br><span class="line">│   ├── tools.py             # 业务工具</span><br><span class="line">│   └── config.py            # 配置管理</span><br><span class="line">│</span><br><span class="line">├── .env                     # 模型API配置</span><br><span class="line">├── .env.example</span><br><span class="line">├── requirements.txt</span><br><span class="line">└── README.md</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-创建-Python-环境"><a href="#3-3-创建-Python-环境" class="headerlink" title="3.3 创建 Python 环境"></a>3.3 创建 Python 环境</h2><p>建议 Python 3.11 或以上版本。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> langgraph-customer-service</span><br><span class="line"><span class="built_in">cd</span> langgraph-customer-service</span><br><span class="line">python -m venv .venv</span><br></pre></td></tr></table></figure>
+
+<p>激活环境：</p>
+<p>Windows：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.venv\Scripts\activate</span><br></pre></td></tr></table></figure>
+
+<p>Linux &#x2F; macOS：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> .venv/bin/activate</span><br></pre></td></tr></table></figure>
+
+<p>创建 <code>requirements.txt</code>：</p>
+<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">langgraph</span><br><span class="line">langchain</span><br><span class="line">langchain-openai</span><br><span class="line">fastapi</span><br><span class="line">uvicorn[standard]</span><br><span class="line">python-dotenv</span><br></pre></td></tr></table></figure>
+
+<p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -r requirements.txt</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-4-配置大模型-API"><a href="#3-4-配置大模型-API" class="headerlink" title="3.4 配置大模型 API"></a>3.4 配置大模型 API</h2><p>创建 <code>.env</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">OPENAI_API_KEY=你的API_KEY</span><br><span class="line">OPENAI_BASE_URL=https://api.openai.com/v1</span><br><span class="line">MODEL_NAME=gpt-4.1-mini</span><br></pre></td></tr></table></figure>
+
+<p>这里使用 OpenAI 兼容接口。可根据所选模型服务商修改 Base URL 和模型名称。</p>
+<p>创建 <code>app/config.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">from</span> dotenv <span class="keyword">import</span> load_dotenv</span><br><span class="line"></span><br><span class="line">load_dotenv()</span><br><span class="line"></span><br><span class="line">OPENAI_API_KEY = os.getenv(<span class="string">&quot;OPENAI_API_KEY&quot;</span>)</span><br><span class="line">OPENAI_BASE_URL = os.getenv(<span class="string">&quot;OPENAI_BASE_URL&quot;</span>)</span><br><span class="line">MODEL_NAME = os.getenv(<span class="string">&quot;MODEL_NAME&quot;</span>, <span class="string">&quot;gpt-4.1-mini&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> OPENAI_API_KEY:</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;请配置 OPENAI_API_KEY&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-5-定义-Agent-状态"><a href="#3-5-定义-Agent-状态" class="headerlink" title="3.5 定义 Agent 状态"></a>3.5 定义 Agent 状态</h2><p>创建 <code>app/state.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> MessagesState</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">CustomerServiceState</span>(<span class="title class_ inherited__">MessagesState</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    智能客服状态。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    MessagesState 已包含 messages 字段，</span></span><br><span class="line"><span class="string">    并配置了消息追加 Reducer。</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    user_id: <span class="built_in">str</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-6-开发业务工具"><a href="#3-6-开发业务工具" class="headerlink" title="3.6 开发业务工具"></a>3.6 开发业务工具</h2><p>创建 <code>app/tools.py</code>。这里先用模拟数据库，后续可以替换为 MySQL、PostgreSQL 或企业内部 API。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_core.tools <span class="keyword">import</span> tool</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟订单数据库</span></span><br><span class="line">ORDERS = &#123;</span><br><span class="line">    <span class="string">&quot;10001&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;运输中&quot;</span>,</span><br><span class="line">        <span class="string">&quot;product&quot;</span>: <span class="string">&quot;笔记本电脑&quot;</span>,</span><br><span class="line">        <span class="string">&quot;amount&quot;</span>: <span class="number">5999</span>,</span><br><span class="line">        <span class="string">&quot;delivery&quot;</span>: <span class="string">&quot;预计明天送达&quot;</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="string">&quot;10002&quot;</span>: &#123;</span><br><span class="line">        <span class="string">&quot;status&quot;</span>: <span class="string">&quot;已发货&quot;</span>,</span><br><span class="line">        <span class="string">&quot;product&quot;</span>: <span class="string">&quot;无线耳机&quot;</span>,</span><br><span class="line">        <span class="string">&quot;amount&quot;</span>: <span class="number">399</span>,</span><br><span class="line">        <span class="string">&quot;delivery&quot;</span>: <span class="string">&quot;预计后天送达&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 模拟商品库存</span></span><br><span class="line">PRODUCTS = &#123;</span><br><span class="line">    <span class="string">&quot;笔记本电脑&quot;</span>: <span class="number">20</span>,</span><br><span class="line">    <span class="string">&quot;无线耳机&quot;</span>: <span class="number">100</span>,</span><br><span class="line">    <span class="string">&quot;机械键盘&quot;</span>: <span class="number">35</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_order</span>(<span class="params">order_id: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;根据订单编号查询订单状态和物流信息。&quot;&quot;&quot;</span></span><br><span class="line">    order = ORDERS.get(order_id)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> order:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;未查询到该订单，请检查订单编号。&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">str</span>(order)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">query_stock</span>(<span class="params">product_name: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;查询指定商品的当前库存数量。&quot;&quot;&quot;</span></span><br><span class="line">    stock = PRODUCTS.get(product_name)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> stock <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;未查询到该商品。&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="string">f&quot;<span class="subst">&#123;product_name&#125;</span> 当前库存为 <span class="subst">&#123;stock&#125;</span> 件。&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@tool</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_after_sales</span>(<span class="params">order_id: <span class="built_in">str</span>, reason: <span class="built_in">str</span></span>) -&gt; <span class="built_in">str</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;创建售后申请。这里只模拟申请，不会真正提交业务。&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> order_id <span class="keyword">not</span> <span class="keyword">in</span> ORDERS:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;订单不存在，无法创建售后申请。&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="string">f&quot;售后申请已生成（模拟），&quot;</span></span><br><span class="line">        <span class="string">f&quot;订单编号：<span class="subst">&#123;order_id&#125;</span>，申请原因：<span class="subst">&#123;reason&#125;</span>。&quot;</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">tools = [query_order, query_stock, create_after_sales]</span><br></pre></td></tr></table></figure>
+
+<p>生产环境中的退款、退货、取消订单等操作，不能让模型无条件执行。应增加权限验证、人工审核和幂等控制。</p>
+<h2 id="3-7-构建-LangGraph-工作流"><a href="#3-7-构建-LangGraph-工作流" class="headerlink" title="3.7 构建 LangGraph 工作流"></a>3.7 构建 LangGraph 工作流</h2><p>创建 <code>app/agent.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langchain_openai <span class="keyword">import</span> ChatOpenAI</span><br><span class="line"><span class="keyword">from</span> langchain_core.messages <span class="keyword">import</span> SystemMessage</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> langgraph.graph <span class="keyword">import</span> StateGraph, START</span><br><span class="line"><span class="keyword">from</span> langgraph.prebuilt <span class="keyword">import</span> ToolNode, tools_condition</span><br><span class="line"><span class="keyword">from</span> langgraph.checkpoint.memory <span class="keyword">import</span> InMemorySaver</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.state <span class="keyword">import</span> CustomerServiceState</span><br><span class="line"><span class="keyword">from</span> app.tools <span class="keyword">import</span> tools</span><br><span class="line"><span class="keyword">from</span> app.config <span class="keyword">import</span> OPENAI_API_KEY, OPENAI_BASE_URL, MODEL_NAME</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 初始化大模型</span></span><br><span class="line">llm = ChatOpenAI(</span><br><span class="line">    model=MODEL_NAME,</span><br><span class="line">    api_key=OPENAI_API_KEY,</span><br><span class="line">    base_url=OPENAI_BASE_URL,</span><br><span class="line">    temperature=<span class="number">0</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 绑定业务工具</span></span><br><span class="line">llm_with_tools = llm.bind_tools(tools)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 定义系统提示词</span></span><br><span class="line">SYSTEM_PROMPT = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">你是一个专业的企业智能客服。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">你的工作职责：</span></span><br><span class="line"><span class="string">1. 帮助用户查询订单。</span></span><br><span class="line"><span class="string">2. 帮助用户查询商品库存。</span></span><br><span class="line"><span class="string">3. 帮助用户处理售后问题。</span></span><br><span class="line"><span class="string">4. 回答一般业务咨询。</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">工作规则：</span></span><br><span class="line"><span class="string">- 查询订单时必须使用 query_order 工具。</span></span><br><span class="line"><span class="string">- 查询库存时必须使用 query_stock 工具。</span></span><br><span class="line"><span class="string">- 用户提出售后申请时，可以调用 create_after_sales。</span></span><br><span class="line"><span class="string">- 不允许编造订单信息。</span></span><br><span class="line"><span class="string">- 工具返回什么，就根据工具结果回答。</span></span><br><span class="line"><span class="string">- 使用简洁、专业的中文回答用户。</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 定义 Agent 节点</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">agent_node</span>(<span class="params">state: CustomerServiceState</span>):</span><br><span class="line">    messages = [</span><br><span class="line">        SystemMessage(content=SYSTEM_PROMPT)</span><br><span class="line">    ] + state[<span class="string">&quot;messages&quot;</span>]</span><br><span class="line"></span><br><span class="line">    response = llm_with_tools.invoke(messages)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;messages&quot;</span>: [response]&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 构建 Graph</span></span><br><span class="line">builder = StateGraph(CustomerServiceState)</span><br><span class="line"></span><br><span class="line">builder.add_node(<span class="string">&quot;agent&quot;</span>, agent_node)</span><br><span class="line">builder.add_node(<span class="string">&quot;tools&quot;</span>, ToolNode(tools))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 设置入口</span></span><br><span class="line">builder.add_edge(START, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 7. 设置条件路由</span></span><br><span class="line">builder.add_conditional_edges(<span class="string">&quot;agent&quot;</span>, tools_condition)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 8. 工具执行完毕后返回 Agent</span></span><br><span class="line">builder.add_edge(<span class="string">&quot;tools&quot;</span>, <span class="string">&quot;agent&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 9. 创建 Checkpointer</span></span><br><span class="line">checkpointer = InMemorySaver()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 10. 编译工作流</span></span><br><span class="line">graph = builder.<span class="built_in">compile</span>(checkpointer=checkpointer)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 11. 提供统一调用方法</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat</span>(<span class="params">question: <span class="built_in">str</span>, user_id: <span class="built_in">str</span>, thread_id: <span class="built_in">str</span></span>):</span><br><span class="line">    config = &#123;</span><br><span class="line">        <span class="string">&quot;configurable&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;thread_id&quot;</span>: thread_id</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    result = graph.invoke(</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;messages&quot;</span>: [</span><br><span class="line">                &#123;<span class="string">&quot;role&quot;</span>: <span class="string">&quot;user&quot;</span>, <span class="string">&quot;content&quot;</span>: question&#125;</span><br><span class="line">            ],</span><br><span class="line">            <span class="string">&quot;user_id&quot;</span>: user_id</span><br><span class="line">        &#125;,</span><br><span class="line">        config=config</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> result[<span class="string">&quot;messages&quot;</span>][-<span class="number">1</span>].content</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行流程"><a href="#执行流程" class="headerlink" title="执行流程"></a>执行流程</h3><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">START</span><br><span class="line">  ↓</span><br><span class="line">agent_node</span><br><span class="line">  ↓</span><br><span class="line">tools_condition</span><br><span class="line">  ├── 有工具调用 → ToolNode → agent_node（循环）</span><br><span class="line">  └── 无工具调用 → END</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-8-开发-FastAPI-接口"><a href="#3-8-开发-FastAPI-接口" class="headerlink" title="3.8 开发 FastAPI 接口"></a>3.8 开发 FastAPI 接口</h2><p>创建 <code>app/main.py</code>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> fastapi <span class="keyword">import</span> FastAPI</span><br><span class="line"><span class="keyword">from</span> pydantic <span class="keyword">import</span> BaseModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> app.agent <span class="keyword">import</span> chat</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">app = FastAPI(</span><br><span class="line">    title=<span class="string">&quot;LangGraph 企业智能客服&quot;</span>,</span><br><span class="line">    version=<span class="string">&quot;1.0.0&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ChatRequest</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    user_id: <span class="built_in">str</span></span><br><span class="line">    thread_id: <span class="built_in">str</span></span><br><span class="line">    question: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ChatResponse</span>(<span class="title class_ inherited__">BaseModel</span>):</span><br><span class="line">    answer: <span class="built_in">str</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.get(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">index</span>():</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;LangGraph Customer Service is running&quot;</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.post(<span class="params"><span class="string">&quot;/chat&quot;</span>, response_model=ChatResponse</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_api</span>(<span class="params">request: ChatRequest</span>):</span><br><span class="line">    answer = chat(</span><br><span class="line">        question=request.question,</span><br><span class="line">        user_id=request.user_id,</span><br><span class="line">        thread_id=request.thread_id</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ChatResponse(answer=answer)</span><br></pre></td></tr></table></figure>
+
+<p>启动项目：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uvicorn app.main:app --reload</span><br></pre></td></tr></table></figure>
+
+<p>打开接口文档：</p>
+<p><a target="_blank" rel="noopener" href="http://127.0.0.1:8000/docs">http://127.0.0.1:8000/docs</a></p>
+<h2 id="3-9-测试项目"><a href="#3-9-测试项目" class="headerlink" title="3.9 测试项目"></a>3.9 测试项目</h2><p>请求：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">POST /chat</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/json</span><br></pre></td></tr></table></figure>
+
+<p>请求参数：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;thread_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;session001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;question&quot;</span><span class="punctuation">:</span> <span class="string">&quot;帮我查询订单10001的物流情况&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>预期执行过程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">用户输入</span><br><span class="line">   ↓</span><br><span class="line">Agent 分析问题</span><br><span class="line">   ↓</span><br><span class="line">识别订单查询需求</span><br><span class="line">   ↓</span><br><span class="line">调用 query_order</span><br><span class="line">   ↓</span><br><span class="line">获取订单数据库结果</span><br><span class="line">   ↓</span><br><span class="line">LLM 整理物流信息</span><br><span class="line">   ↓</span><br><span class="line">返回用户</span><br></pre></td></tr></table></figure>
+
+<p>预期回答：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">您好！</span><br><span class="line"></span><br><span class="line">您的订单编号为 10001。</span><br><span class="line"></span><br><span class="line">商品：笔记本电脑</span><br><span class="line">订单状态：运输中</span><br><span class="line">预计送达：明天</span><br><span class="line"></span><br><span class="line">请耐心等待，感谢您的支持！</span><br></pre></td></tr></table></figure>
+
+<p>再测试同一个会话：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;user_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;user001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;thread_id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;session001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;question&quot;</span><span class="punctuation">:</span> <span class="string">&quot;那我的订单买的是什么商品？&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>由于使用相同的 <code>thread_id</code>，Agent 可以利用前一轮会话上下文回答。</p>
+<p><strong>注意：</strong> 这里使用内存 Checkpointer，服务重启后会话状态丢失。当前代码适合学习和本地演示，不应直接视为生产级系统。</p>
+<hr>
+<h1 id="四、项目进阶：如何向生产级系统演进？"><a href="#四、项目进阶：如何向生产级系统演进？" class="headerlink" title="四、项目进阶：如何向生产级系统演进？"></a>四、项目进阶：如何向生产级系统演进？</h1><h2 id="4-1-增加人工审核机制"><a href="#4-1-增加人工审核机制" class="headerlink" title="4.1 增加人工审核机制"></a>4.1 增加人工审核机制</h2><p>例如退款操作：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.types <span class="keyword">import</span> interrupt</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">approval_node</span>(<span class="params">state</span>):</span><br><span class="line">    approved = interrupt(&#123;</span><br><span class="line">        <span class="string">&quot;message&quot;</span>: <span class="string">&quot;是否批准退款？&quot;</span>,</span><br><span class="line">        <span class="string">&quot;order_id&quot;</span>: state[<span class="string">&quot;order_id&quot;</span>]</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> approved:</span><br><span class="line">        <span class="keyword">return</span> &#123;<span class="string">&quot;approval_status&quot;</span>: <span class="string">&quot;approved&quot;</span>&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;approval_status&quot;</span>: <span class="string">&quot;rejected&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>interrupt()</code> 会暂停 Graph，等待外部人工确认。恢复执行时，可以使用：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.types <span class="keyword">import</span> Command</span><br><span class="line"></span><br><span class="line">graph.invoke(</span><br><span class="line">    Command(resume=<span class="literal">True</span>),</span><br><span class="line">    config=config</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p>实际开发需要配置持久化 Checkpointer，并保证恢复时使用原来的 <code>thread_id</code>。</p>
+<h2 id="4-2-增加-PostgreSQL-持久化"><a href="#4-2-增加-PostgreSQL-持久化" class="headerlink" title="4.2 增加 PostgreSQL 持久化"></a>4.2 增加 PostgreSQL 持久化</h2><p>安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install <span class="string">&quot;langgraph-checkpoint-postgres&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>基本配置示意：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> langgraph.checkpoint.postgres <span class="keyword">import</span> PostgresSaver</span><br><span class="line"></span><br><span class="line">DB_URI = (</span><br><span class="line">    <span class="string">&quot;postgresql://user:password&quot;</span></span><br><span class="line">    <span class="string">&quot;@localhost:5432/langgraph&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> PostgresSaver.from_conn_string(DB_URI) <span class="keyword">as</span> checkpointer:</span><br><span class="line">    checkpointer.setup()</span><br><span class="line">    graph = builder.<span class="built_in">compile</span>(checkpointer=checkpointer)</span><br></pre></td></tr></table></figure>
+
+<p>生产服务需要在应用生命周期内维护数据库连接，不能在每次请求时重新创建和关闭 Checkpointer。</p>
+<h2 id="4-3-增加-RAG-知识库"><a href="#4-3-增加-RAG-知识库" class="headerlink" title="4.3 增加 RAG 知识库"></a>4.3 增加 RAG 知识库</h2><p>企业客服还可以接入：</p>
+<ul>
+<li>企业产品说明书。</li>
+<li>售后服务规范。</li>
+<li>退款退货制度。</li>
+<li>企业内部管理制度。</li>
+<li>常见问题 FAQ。</li>
+</ul>
+<p>推荐技术组合：</p>
+<table>
+<thead>
+<tr>
+<th>技术</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LangGraph</td>
+<td>Agent 工作流</td>
+</tr>
+<tr>
+<td>LangChain</td>
+<td>RAG 组件集成</td>
+</tr>
+<tr>
+<td>Embedding</td>
+<td>文本向量化</td>
+</tr>
+<tr>
+<td>FAISS &#x2F; Milvus</td>
+<td>向量检索</td>
+</tr>
+<tr>
+<td>PostgreSQL</td>
+<td>业务数据和持久化</td>
+</tr>
+<tr>
+<td>Redis</td>
+<td>缓存及共享数据</td>
+</tr>
+</tbody></table>
+<p>知识库检索节点示意：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">knowledge_node</span>(<span class="params">state</span>):</span><br><span class="line">    question = state[<span class="string">&quot;messages&quot;</span>][-<span class="number">1</span>].content</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 需要预先初始化实际的向量数据库实例</span></span><br><span class="line">    documents = vector_store.similarity_search(</span><br><span class="line">        question,</span><br><span class="line">        k=<span class="number">3</span></span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    context = <span class="string">&quot;\n&quot;</span>.join(</span><br><span class="line">        doc.page_content</span><br><span class="line">        <span class="keyword">for</span> doc <span class="keyword">in</span> documents</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;knowledge_context&quot;</span>: context&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该代码片段需要先初始化 <code>vector_store</code>，并将 <code>knowledge_context</code> 添加到 State 定义中。</p>
+<h2 id="4-4-最终企业级架构"><a href="#4-4-最终企业级架构" class="headerlink" title="4.4 最终企业级架构"></a>4.4 最终企业级架构</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">         用户请求</span><br><span class="line">            |</span><br><span class="line">            v</span><br><span class="line">       FastAPI API</span><br><span class="line">            |</span><br><span class="line">            v</span><br><span class="line">      LangGraph Runtime</span><br><span class="line">            |</span><br><span class="line">   +--------+--------+</span><br><span class="line">   |        |        |</span><br><span class="line">   v        v        v</span><br><span class="line">意图识别  RAG检索  业务Agent</span><br><span class="line">   |        |        |</span><br><span class="line">   +--------+--------+</span><br><span class="line">            |</span><br><span class="line">            v</span><br><span class="line">         LLM模型</span><br><span class="line">            |</span><br><span class="line">   +--------+--------+</span><br><span class="line">   |        |        |</span><br><span class="line">   v        v        v</span><br><span class="line">订单工具  库存工具  售后工具</span><br><span class="line">   |        |        |</span><br><span class="line">   +--------+--------+</span><br><span class="line">            |</span><br><span class="line">            v</span><br><span class="line">        人工审核</span><br><span class="line">            |</span><br><span class="line">            v</span><br><span class="line">       返回执行结果</span><br><span class="line">            |</span><br><span class="line">   +--------+--------+</span><br><span class="line">   |        |        |</span><br><span class="line">   v        v        v</span><br><span class="line">PostgreSQL Redis  LangSmith</span><br></pre></td></tr></table></figure>
+
+<p>生产环境还需要考虑：</p>
+<ul>
+<li>API 身份认证、RBAC 权限控制。</li>
+<li>数据库连接池及事务管理。</li>
+<li>工具调用超时、重试和幂等性。</li>
+<li>敏感数据脱敏和审计日志。</li>
+<li>Checkpoint 生命周期及数据清理。</li>
+<li>模型调用成本、延迟和并发控制。</li>
+<li>Agent 执行轨迹与质量评估。</li>
+</ul>
+<hr>
+<h1 id="五、LangGraph-学习路线"><a href="#五、LangGraph-学习路线" class="headerlink" title="五、LangGraph 学习路线"></a>五、LangGraph 学习路线</h1><p>建议按以下顺序学习，不要一开始就研究复杂的多 Agent 架构。</p>
+<h2 id="第一阶段：Graph-基础"><a href="#第一阶段：Graph-基础" class="headerlink" title="第一阶段：Graph 基础"></a>第一阶段：Graph 基础</h2><ul>
+<li>State、Node、Edge</li>
+<li>StateGraph、START、END</li>
+<li>Reducer</li>
+<li>条件路由</li>
+</ul>
+<h2 id="第二阶段：Agent-工具调用"><a href="#第二阶段：Agent-工具调用" class="headerlink" title="第二阶段：Agent 工具调用"></a>第二阶段：Agent 工具调用</h2><ul>
+<li>ChatModel</li>
+<li>Tool Calling</li>
+<li>ToolNode</li>
+<li>tools_condition</li>
+<li>Agent 循环</li>
+</ul>
+<h2 id="第三阶段：状态和记忆"><a href="#第三阶段：状态和记忆" class="headerlink" title="第三阶段：状态和记忆"></a>第三阶段：状态和记忆</h2><ul>
+<li>Checkpointer</li>
+<li>thread_id</li>
+<li>短期记忆与长期记忆</li>
+<li>PostgreSQL 持久化</li>
+</ul>
+<h2 id="第四阶段：高级工作流"><a href="#第四阶段：高级工作流" class="headerlink" title="第四阶段：高级工作流"></a>第四阶段：高级工作流</h2><ul>
+<li>Interrupt</li>
+<li>Command</li>
+<li>Send</li>
+<li>Subgraph</li>
+<li>并行执行</li>
+</ul>
+<h2 id="第五阶段：企业级-Agent"><a href="#第五阶段：企业级-Agent" class="headerlink" title="第五阶段：企业级 Agent"></a>第五阶段：企业级 Agent</h2><ul>
+<li>RAG 知识库</li>
+<li>Multi-Agent</li>
+<li>FastAPI</li>
+<li>LangSmith</li>
+<li>Docker 部署</li>
+</ul>
+<hr>
+<h1 id="六、最重要的知识点总结"><a href="#六、最重要的知识点总结" class="headerlink" title="六、最重要的知识点总结"></a>六、最重要的知识点总结</h1><ol>
+<li><strong>State 是数据中心</strong>：所有节点共享工作流状态。</li>
+<li><strong>Node 是执行单元</strong>：每个节点完成一项具体任务。</li>
+<li><strong>Edge 是控制流程</strong>：决定下一个执行什么节点。</li>
+<li><strong>Checkpointer 是持久化机制</strong>：支持状态保存和恢复。</li>
+<li><strong>Agent 是决策执行主体</strong>：大模型决定如何使用工具、如何完成任务。</li>
+</ol>
+<p>还要区分：</p>
+<ul>
+<li><strong>LangChain</strong>：侧重模型、工具、检索等组件的集成。</li>
+<li><strong>LangGraph</strong>：侧重 Agent 的状态管理、执行控制和工作流编排。</li>
+</ul>
+<p>两者可以结合使用，但 LangGraph 本身并不强制依赖 LangChain。</p>
+<hr>
+<h1 id="七、官方学习资源"><a href="#七、官方学习资源" class="headerlink" title="七、官方学习资源"></a>七、官方学习资源</h1><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph Python 官方入门</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/langchain-ai/langgraph">LangGraph GitHub 源码仓库</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.smith.langchain.com/">LangSmith：Agent 调试、追踪与评估</a></li>
+</ul>
+
+      </div>
+    </div>
+    
+      <script src='https://unpkg.com/mermaid@latest/dist/mermaid.min.js'></script>
+      <script>
+        if (window.mermaid) {
+          mermaid.initialize({"startOnload":true});
+        }
+      </script>
+    
+  </article>
+  <div class="post__foot">
+    
+    <div class="post-nav">
+  
+    <div class="post-nav-item-left"></div>
+  
+  <div class="vhr"></div>
+  
+    <a class="post-nav-item-right" href="/2026/07/04/%E9%98%B2%E5%BE%A1%E6%80%A7%E5%AE%89%E5%85%A8%E9%A9%BE%E9%A9%B6%E7%AE%97%E6%B3%95%E5%88%9D%E6%8E%A2/">
+      <div class="text-align">
+        <span class="text-small">下一篇</span>
+        <svg t="1670570876164"
+             class="icon"
+             viewBox="0 0 1024 1024"
+             transform="scale(-1,-1)"
+             width="16"
+             height="16">
+          <path d="M384 512L731.733333 202.666667c17.066667-14.933333 19.2-42.666667 4.266667-59.733334-14.933333-17.066667-42.666667-19.2-59.733333-4.266666l-384 341.333333c-10.666667 8.533333-14.933333 19.2-14.933334 32s4.266667 23.466667 14.933334 32l384 341.333333c8.533333 6.4 19.2 10.666667 27.733333 10.666667 12.8 0 23.466667-4.266667 32-14.933333 14.933333-17.066667 14.933333-44.8-4.266667-59.733334L384 512z" p-id="14596" />
+        </svg>
+      </div>
+      模拟防御性安全驾驶算法初探
+    </a>
+  
+</div>
+
+    
+    
+  </div>
+
+    </div>
+    <div class="foot">
+  <div class="foot-inner">
+    <div class="foot__head">
+      
+        <div class="foot-line">
+          <div class="matts">S</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">h</div><div class="matts">u</div><div class="matts">n</div><div class="matts">g</div><div class="matts">r</div><div class="matts">y</div>
+        </div>
+      
+        <div class="foot-line">
+          <div class="matts">s</div><div class="matts">t</div><div class="matts">a</div><div class="matts">y</div><div class="matts"> </div><div class="matts">f</div><div class="matts">o</div><div class="matts">o</div><div class="matts">l</div><div class="matts">i</div><div class="matts">s</div><div class="matts">h</div>
+        </div>
+      
+    </div>
+    <div class="foot__body">
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Links</div>
+          <div class="foot-item__body">
+            
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://apt-x.cn">apt-x</a>
+          </div>
+        
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-link+.svg" />
+            <a class="foot-link" href="mailto:0xd0e0@gmail.com?subject=申请http://example.com的友链">申请友链</a>
+          </div>
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      
+        <div class="foot-item">
+          <div class="foot-item__head">Account</div>
+          <div class="foot-item__body">
+            
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/logo-github.svg" />
+            <a class="foot-link" target="_blank" rel="noopener" href="https://github.com/CVEProject">CVEProject</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+          </div>
+        </div>
+      
+      <div class="foot-item">
+        <div class="foot-item__head">Contact</div>
+        <div class="foot-item__body">
+          
+
+
+  
+  
+    <div class="foot-link-group">
+      
+        
+        
+          <div class="text">
+            <img alt="link"
+                 height="20px"
+                 width="20px"
+                 src="/images/icon/icon-email.svg" />
+            <a class="foot-link" href="0xd0e0@gmail.com">0xd0e0@gmail.com</a>
+          </div>
+        
+      
+        
+        
+      
+    </div>
+  
+
+
+        </div>
+      </div>
+    </div>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?9c1c7e2fd009de02992beaacd49b3b30";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+
+    
+      <script src="https://unpkg.com/js-polyfills@0.1.43/es6.js"></script>
+      <script id="MathJax-script"
+              async
+              src="https://www.unpkg.com/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+    
+    
+      <script src="/js/search.js"></script>
+      <script>
+        searchInitialize("/search.json")
+      </script>
+    
+    <script src="/js/copy-code.js"></script>
+    
+  
+
+  </body>
+</html>
